@@ -211,13 +211,14 @@
         width: 100% !important;
     }
 
-    .tl-slide .tl-slide-content .tl-media {
-        order: 1 !important;
-        width: 40% !important;
-        max-width: 40% !important;
-        flex: 0 0 40% !important;
+    .tl-slide .tl-slide-content .tl-text {
+        order: 2 !important;
+        width: 55% !important;
+        max-width: 55% !important;
+        flex: 0 0 55% !important;
         float: none !important;
-        margin: 0 !important;
+        margin: 0 0 0 6% !important;
+        padding-left: 0 !important;
         box-sizing: border-box !important;
     }
 
@@ -305,8 +306,8 @@
     }
 
     .tl-slide .tl-slide-content-container {
-        padding: 10px !important;
-        max-height: 65vh !important;
+        padding: 25px 12px 15px 12px !important;
+        max-height: 85vh !important;
         overflow-y: auto !important;
         box-sizing: border-box !important;
     }
@@ -319,6 +320,16 @@
     .tl-slide .tl-text p {
         font-size: 0.9rem !important;
         text-align: justify !important;
+    }
+
+    /* Recuperar encabezados y fechas en celular */
+    .tl-slide .tl-headline,
+    .tl-slide .tl-headline-title,
+    .tl-slide .tl-date,
+    .tl-slide .tl-text h2 {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
         
