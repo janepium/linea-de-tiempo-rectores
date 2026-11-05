@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Línea de Tiempo - Rectores UdeA</title>
+
+    <!-- Estilos oficiales de TimelineJS desde CDN -->
+    <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+
+    <style>
+        /* 1. FONDO GENERAL Y VENTANA */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f2f6f3 !important;
+            font-family: 'TheSerif Regular', 'TheSerif', Georgia, serif !important;
+            position: relative;
+        }
+
+        /* 2. FORMAS DECORATIVAS COMPUESTAS EN EL FONDO */
+        .bg-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bg-decorations svg {
+            position: absolute;
+        }
+
+        /* Esquina Superior Izquierda: Naranja (#F9A12C) y Morado UdeA (#70205B) */
+        .shape-top-left {
+            top: 0;
+            left: 0;
+            width: 480px;
+            height: 380px;
+        }
+
+        /* Esquina Superior Derecha: Verde UdeA Principal (#026937) */
+        .shape-top-right {
+            top: 0;
+            right: 0;
+            width: 580px;
+            height: 440px;
+        }
+
+        /* Centro-Izquierda: Verde Turquesa (#0E7774) y Naranja (#F9A12C) */
+        .shape-mid-left {
+            top: 35%;
+            left: 0;
+            width: 250px;
+            height: 350px;
+        }
+
+        /* Esquina Inferior Izquierda: Morado Violeta (#532D87) + Naranja (#F9A12C) */
+        .shape-bottom-left {
+            bottom: 0;
+            left: 0;
+            width: 520px;
+            height: 400px;
+        }
+
+        /* Esquina Inferior Derecha: Azul UdeA (#137598) + Verde Mentolado (#3EBDAC) */
+        .shape-bottom-right {
+            bottom: 0;
+            right: 0;
+            width: 450px;
+            height: 350px;
+        }
+
+        /* 3. TRANSPARENCIA TOTAL EN TIMELINEJS */
+        #timeline-embed,
+        .tl-timeline,
+        .tl-storyslider,
+        .tl-slider-container,
+        .tl-slider-background,
+        .tl-slide,
+        .tl-slide-background {
+            background: transparent !important;
+        }
+
+        #timeline-embed {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* 4. TARJETA PRINCIPAL DEL RECTOR (Cristal con desenfoque suave) */
+        .tl-storyslider {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .tl-slide-content-container {
+            background: rgba(255, 255, 255, 0.75) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 15px 35px rgba(2, 105, 55, 0.1) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+            padding: 35px !important;
+        }
+
+        /* TÍTULOS Y NOMBRES DE RECTORES: Verde UdeA Principal (#026937) */
+        .tl-headline {
+            font-family: 'TheSerif Bold Italic', 'TheSerif', Georgia, serif !important;
+            color: #026937 !important;
+            font-weight: 800 !important;
+        }
+
+        /* SUBTÍTULOS / FECHAS: Gris sobrio neutro */
+        .tl-headline-date, 
+        .tl-date,
+        .tl-caption,
+        .tl-timeaxis-tick-text {
+            color: #777777 !important;
+            font-weight: 500 !important;
+        }
+
+        /* 5. NAVEGADOR DE FECHAS INFERIOR (FLOTANTE UdeA) */
+        .tl-timenav {
+            background: rgba(255, 255, 255, 0.90) !important;
+            backdrop-filter: blur(10px) !important;
+            border-radius: 24px 24px 0 0 !important;
+            border-top: 4px solid #F9A12C !important;
+            box-shadow: 0 -10px 30px rgba(2, 105, 55, 0.12) !important;
+        }
+
+        /* Botones/Marcadores de rectores en la barra */
+        .tl-marker .tl-marker-content-container {
+            border-radius: 12px !important;
+            border: 1px solid rgba(2, 105, 55, 0.2) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* Rector Activo/Seleccionado: Fondo Verde UdeA (#026937) */
+        .tl-marker.tl-marker-active .tl-marker-content-container {
+            background: #026937 !important;
+            color: #ffffff !important;
+            font-weight: bold !important;
+            box-shadow: 0 4px 12px rgba(2, 105, 55, 0.35) !important;
+        }
+
+        /* Línea del eje de años */
+        .tl-timeaxis-tick {
+            border-color: rgba(2, 105, 55, 0.25) !important;
+        }
+
+        /* FOTO DEL RECTOR CON MARCO VINTAGE/EDITORIAL */
+        .tl-media-item {
+            position: relative !important;
+            padding: 12px !important;
+            background: transparent !important;
+        }
+
+        .tl-media-item img, 
+        .tl-media-image {
+            border-radius: 4px !important;
+            border: 1px solid rgba(2, 105, 55, 0.3) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+            display: block !important;
+        }
+
+        /* MARCO ORNAMENTADO VECTORIAL */
+        .tl-media-item::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            pointer-events: none !important;
+            z-index: 2 !important;
+            border: 16px solid transparent !important;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23026937' stroke-width='2' fill='none'%3E%3Cpath d='M2,2 L98,2 L98,98 L2,98 Z' stroke-width='1'/%3E%3Cpath d='M6,6 L94,6 L94,94 L6,94 Z' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23026937'/%3E%3Ccircle cx='88' cy='12' r='4' fill='%23026937'/%3E%3Ccircle cx='12' cy='88' r='4' fill='%23026937'/%3E%3Ccircle cx='88' cy='88' r='4' fill='%23026937'/%3E%3Cpath d='M2,22 C12,22 22,12 22,2'/%3E%3Cpath d='M98,22 C88,22 78,12 78,2'/%3E%3Cpath d='M2,78 C12,78 22,88 22,98'/%3E%3Cpath d='M98,78 C88,78 78,88 78,98'/%3E%3C/g%3E%3C/svg%3E") 30 stretch !important;
+        }
+
+        /* 6. BALANCE DE TAMAÑO DE FOTO Y DISTANCIA DEL TEXTO 
+        .tl-slide .tl-slide-content .tl-media {
+            width: 35% !important;
+            max-width: 35% !important;
+            margin-right: 0 !important;
+        }
+
+        .tl-slide .tl-slide-content .tl-text {
+            width: 60% !important;
+            max-width: 60% !important;
+            margin-left: 5% !important;
+            padding-left: 0 !important;
+        }
+        */
+
+        /* 6. BALANCE DE TAMAÑO DE FOTO Y DISTANCIA DEL TEXTO (TARJETA ANCHA COMPLETA) */
+        .tl-slide .tl-slide-content .tl-media {
+            width: 40% !important;        /* Tu proporción exacta de foto */
+            max-width: 40% !important;
+            margin-right: 0 !important;
+            float: left !important;
+        }
+
+        .tl-slide .tl-slide-content .tl-text {
+            width: 55% !important;        /* Tu proporción exacta de texto */
+            max-width: 55% !important;
+            margin-left: 4% !important;   /* Tu espaciado personalizado */
+            padding-left: 0 !important;
+            float: right !important;
+        }
+
+        /* Limpieza de flotados en la tarjeta sin encoger el tarjetón blanco */
+        .tl-slide-content-container::after {
+            content: "" !important;
+            display: table !important;
+            clear: both !important;
+        }
+
+        /* 7A. AJUSTE PARA VENTANAS REDUCIDAS A LA MITAD (Mantiene lo que te gustó) */
+        @media (min-width: 601px) and (max-width: 900px) {
+            .tl-slide .tl-slide-content-container {
+                display: block !important;
+                padding: 15px !important;
+                max-height: 70vh !important;
+                overflow-y: auto !important;
+                text-align: center !important;
+            }
+
+            .tl-slide .tl-slide-content .tl-media {
+                width: 100% !important;
+                max-width: 200px !important;
+                margin: 0 auto 15px auto !important;
+                float: none !important;
+                display: block !important;
+            }
+
+            .tl-slide .tl-slide-content .tl-text {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                float: none !important;
+                display: block !important;
+                text-align: center !important;
+            }
+
+            .tl-slide .tl-text h2.tl-headline-title {
+                font-size: 1.4rem !important;
+            }
+        }
+
+        /* 7B. ADAPTACIÓN PARA CELULARES (Móviles reales sin cortar bordes) */
+        @media (max-width: 600px) {
+            .tl-storyslider,
+            .tl-slide,
+            .tl-slide-content {
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .tl-slide .tl-slide-content-container {
+                display: block !important;
+                width: 95% !important;
+                margin: 0 auto !important;
+                padding: 12px !important;
+                max-height: 65vh !important;
+                overflow-y: auto !important;
+                box-sizing: border-box !important;
+            }
+
+            .tl-slide .tl-slide-content .tl-media {
+                width: 100% !important;
+                max-width: 170px !important;
+                margin: 0 auto 10px auto !important;
+                float: none !important;
+                display: block !important;
+            }
+
+            .tl-slide .tl-slide-content .tl-text {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                float: none !important;
+                display: block !important;
+                text-align: center !important;
+            }
+
+            .tl-slide .tl-text h2.tl-headline-title {
+                font-size: 1.2rem !important;
+            }
+
+            .tl-slide .tl-text p {
+                font-size: 0.88rem !important;
+                text-align: justify !important;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- CONTENEDOR DE FORMAS VECTORIALES CON SU CLASE CORRESPONDIENTE -->
+    <div class="bg-decorations">
+        <!-- 1. Esquina Superior Izquierda: Naranja (#F9A12C) y Morado (#70205B) -->
+        <svg class="shape-top-left" viewBox="0 0 480 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H380C260 110 180 200 0 280V0Z" fill="#F9A12C" opacity="0.85"/>
+            <path d="M0 0H260C180 80 120 150 0 200V0Z" fill="#70205B"/>
+            <circle cx="210" cy="220" r="6" fill="#F9A12C"/>
+            <circle cx="240" cy="240" r="4" fill="#F9A12C"/>
+        </svg>
+
+        <!-- 2. Esquina Superior Derecha: Verde UdeA Principal (#026937) y Turquesa (#3EBDAC) -->
+        <svg class="shape-top-right" viewBox="0 0 580 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M120 0C260 180 400 220 580 160V0H120Z" fill="#026937"/>
+            <path d="M0 0C180 220 360 260 580 210V0H0Z" fill="#3EBDAC" opacity="0.35"/>
+            <path d="M40 0C200 240 380 280 580 230" stroke="#0E7774" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="180" cy="280" r="7" fill="#0E7774"/>
+            <circle cx="210" cy="310" r="5" fill="#0E7774"/>
+        </svg>
+
+        <!-- 3. Centro-Izquierda: Verde Turquesa (#0E7774) y Naranja (#F9A12C) -->
+        <svg class="shape-mid-left" viewBox="0 0 250 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 175C80 175 140 100 160 0M160 0C130 50 70 80 0 80M160 0C180 60 160 120 100 150" stroke="#0E7774" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+            <path d="M0 175C100 200 150 270 140 350" stroke="#F9A12C" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        </svg>
+
+        <!-- 4. Esquina Inferior Izquierda: Morado Violeta (#532D87) + Naranja (#F9A12C) -->
+        <svg class="shape-bottom-left" viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 160C160 140 240 260 420 400H0V160Z" fill="#532D87"/>
+            <path d="M0 240C120 220 180 300 300 400H0V240Z" fill="#F9A12C" opacity="0.75"/>
+            <path d="M0 100C180 100 270 240 460 400" stroke="#70205B" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+
+        <!-- 5. Esquina Inferior Derecha: Azul (#137598) + Verde UdeA (#026937) -->
+        <svg class="shape-bottom-right" viewBox="0 0 450 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M120 350C200 220 320 180 450 220V350H120Z" fill="#026937" opacity="0.85"/>
+            <path d="M30 350C140 200 260 140 450 180V350H30Z" fill="#137598" opacity="0.45"/>
+        </svg>
+    </div>
+
+    <!-- Contenedor único que lee HCL -->
+    <div id="timeline-embed"></div>
+
+    <!-- Motor JavaScript oficial desde CDN -->
+    <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+
+    <script>
+        // Objeto JSON con la información de los rectores
+        var timelineData = {
+            "title": {
+
+                "display_date": "1803 – 2018",
+                
+                "text": {
+                    
+                    "headline": "Rectores Universidad de Antioquia",
+                    "text": "Línea de tiempo histórica de la rectoría de la UdeA."
+                },
+                "media": {
+                        "url": "img/logo-udea.png",
+                        "caption": "Logo de la Universidad de Antioquia",
+                        "credit": "Universidad de Antioquia" /* Opcional */
+                    }
+            },
+            "events": [
+                {
+                    "start_date": { "year": "1803" },
+                    "end_date": { "year": "1812" },
+                    "text": {
+                        "headline": "Fray Rafael de la Serna",
+                        "text": "Nació en Bogotá en 1768, fue el fundador del Colegio de los Franciscanos en Medellín en 1803. Ha sido reseñado como un buen escritor e investigador puesto que realizó estudios sobre algunos asuntos de orden religioso. En 1801 fray Rafael fue nombrado para ponerse al frente de lo que inicialmente fue una institución bajo preceptos franciscanos los cuales optaban por una unidad comunitaria y principalmente religiosa, pero que se transformaría bajo la idea de formar personas más dedicadas al campo intelectual. Dos años después de ser nombrado, llegó a Medellín para encargarse de la enseñanza mientras se construía el colegio y claustro en la plazuela José Félix de Restrepo (actual plazuela de San Ignacio). Fray Rafael se destacó también porque se encargó de abrir escuelas para el primer aprendizaje (primaria) en donde podían ingresar tanto ricos como pobres, teniendo en cuenta que los estatutos y la pedagogía estaban a cargo de éste. Uno de los asuntos relevantes en la posición del religioso frente al Colegio de la nueva fundación de los franciscanos, fue el plan de estudios que se le encargó hacer por primera vez para que la institución pudiera tener un derrotero en la forma de enseñanza. Las ideas que éste presentó se basaban principalmente en aplicar la filosofía como base de estudios franciscanos. además, pensó en no crear cátedras sino facultades en donde se cumpliría una “intensidad horaria semanal y la duración de cada curso” . Luego de haber presentado el plan de estudios fue rechazado por la asamblea revisora, como lo menciona Teresa Uribe, debido al interés de monopolizar la educación superior, esto último a manos de “entidades educativas establecidas en la capital: la Universidad de Santo Tomás, el Colegio de San Bartolomé, el Colegio de San Buenaventura y el Colegio del Rosario.” Al rechazar el plan de estudios propuestos por de la Serna, la institución se vio obligada a continuar con su enseñanza sobre gramática, filosofía y teología. Para 1812 en medio de los problemas políticos que se vivían por la independencia, de la Serna fue acusado de ayudar mediante sus ideas a contrarrestar la causa de las disputas políticas. Además, se le acusó de quemar el periódico La Bagatela publicado en Santa Fe por el señor Antonio Nariño. Por esta causa se le ordenó salir de la provincia, sin embargo el franciscano continuó en contacto con personas allegadas a él que habían seguido con su labor en el colegio. En 1818, luego de haber sido expulsado de la provincia de Antioquia, le ofrecieron nuevamente ponerse al frente de la enseñanza, pero fray Rafael se negó debido a que no había recursos para pagar a los franciscanos que enseñaban y en general para mantener y sostener el lugar."
+                    },
+
+                    "media": {
+                        "url": "img/.jpg",
+                        "caption": "Foto oficial del rector",
+                        "credit": "Universidad de Antioquia" /* Opcional */
+                    }
+                },
+                {
+                    "start_date": { "year": "1812 " },
+                    "end_date": { "year": "1813" },
+                    "text": {
+                        "headline": "Miguel Uribe Restrepo",
+                        "text": "Nació en Envigado en 1792. Hijo de don Miguel María Uribe Vélez y doña Josefa de Restrepo (hermana de José Félix de Restrepo), fue uno de los 22 hijos de este matrimonio. Sus primeros estudios los realizó bajo supervisión del Pbro. Doctor Alberto María de la Calle. Ingresó al Colegio El Rosario en donde tuvo posiblemente como profesores a Caldas y Camilo Torres. Se dice que no alcanzó a doctorarse por inconvenientes políticos y sin embargo fue reconocido como doctor. Su participación en la institución comienza el 19 de enero de 1813, puesto que un año antes fue escogido para dictar la cátedra de filosofía; así el señor Uribe comienzó a ejercer en cargos políticos. En 1816 llega a ser parte del congreso de las provincias en el cual fue representante, pero esto le trajo disgustos políticos porque estuvo en peligro de ser fusilado por los actores de la reconquista española; pudo ser así, de no ser porque en el momento del suceso fingió estar loco. Gracias a su talento personal con la oralidad, tuvo la oportunidad de formar parte de algunos cargos como: director de una compañía de teatro que comenzó en el Colegio de Antioquia con algunas obras y en compañía del señor Mariano Ospina; figuró como primero en las listas de asuntos políticos, uno de estos últimos es la presidencia del Senado en la cual le correspondió escoger al Presidente de la República en 1837. Según lo propuesto por Julio Cesar García, refiriéndose a que los ideales y las luchas que tuvo en su cargo Uribe Restrepo, cimentaron el núcleo del partido conservador. Para la época en que estuvo a cargo de la Institución, se vislumbraron dos cambios importantes: los preceptos que impartían los franciscanos fueron desarrollándose para proyectarse más hacia una enseñanza laica mediante las ciencias exactas y naturales. Por otro lado, ls institución dejó de ser Colegio de la Nueva Fundación de los Franciscanos y pasó a ser Colegio de la Villa de Medellín. Finalmente, a Miguel Uribe Restrepo le ofrecieron el cargo de consejero de estado, el cual rechazó por problemas de salud y en vez de ello le sirvió de ayuda en Medellín al señor Miguel Uribe Ángel, hasta el 11 de mayo de 1842 cuando falleció."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/miguel-de-uribe-restrepo.jpg",
+                        "caption": "Foto oficial del rector Miguel Uribe Restrepo"/* Opcional */
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1813" },
+                    "end_date": { "year": "1815" },
+                    "text": {
+                        "headline": "Francisco José de Caldas",
+                        "text": "La fecha de nacimiento del primer “científico criollo” como se conoce a Francisco José de Caldas, sigue siendo un tema de debate, pues hay quienes dicen que nació en 1768 y otros afirman que fue en 1769. Lo cierto es que este prócer nacido en Popayán fue hijo de don José de Caldas y doña Vicentina Tenorio. Caldas fue becado en el Colegio Mayor de Nuestra Señora del Rosario en Santafé, de donde se graduó en jurisprudencia (derecho) siguiendo las preferencias de sus padres, teniendo en cuenta que sus gustos se inclinaban más por la botánica, las matemáticas y la astronomía. Y aunque este científico mantuvo interés por la observación, también logró desarrollar sus ideas, logrando por ejemplo fabricar instrumentos que facilitaban la labor de investigación como el hipsómetro. Gracias al interés que siempre mostró en la materia, se dio una relación de respeto y admiración mutua entre José Celestino Mutis (fundador de la Real Expedición Botánica) y Caldas. Fue gracias a la brillantez, ingenio y buenos escritos –sobre las plantas que habían en Popayán y Quito– de Francisco José de Caldas que Mutis lo apodó “El Sabio”. Actualmente la Universidad de Antioquia cuenta con importante número de material académico de Caldas, donado por Carlos E. Restrepo. En 1813 acudió al llamado de Juan del Corral para que estableciera en Medellín una escuela militar, la cual fue inaugurada en 1814. Según lo referencia María Teresa Hincapié, el colegio–universidad entró en receso y operó allí la nueva academia de ingenieros militares. Esta fue la primera institución de ingenieros en Antioquia donde se impartieron conocimientos de aritmética, álgebra y trigonometría; además, 'el sabio' Caldas implementó la arquitectura instruyendo a los alumnos en tratados de artillería, arquitectura hidráulica, geografía militar y conocimientos generales (de construcción). Todo esto fue posible gracias a los amplios conocimientos de Caldas en matemáticas, astronomía y geografía. Una de las incidencias políticas que tuvo que ver con la creación de esta academia fue la independencia de la provincia de Antioquia puesto que al no ser dependiente, se hizo necesario un modelo de defensa robusto. En 1815 fue llamado para que estableciera una academia similar en Santa Fe, lo que conllevó a dar por terminada la institución en Medellín ya que Caldas debía retirarse. Para 1816, después de tener que refugiarse en otros lugares gracias a la reconquista española, fue encontrado y ejecutado junto con otros tres personajes (Francisco Antonio Ulloa, Miguel Buch y José Miguel Montalvo) compartiendo los cuatro una fosa común."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/francisco-jose-decaldas.jpg",
+                        "caption": "Foto oficial del rector Francisco José de Caldas"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1813" },
+                    
+            
+                    "text": {
+                        "headline": "Liborio Mejía",
+                        "text": "En el año de 1813 el Colegio de la Villa de Medellín seguía impartiendo su educación bajo los nuevos preceptos laicos diferentes de los religiosos que operaron con los franciscanos. Una de las variaciones fue que gracias a las ideas liberales influyentes de Europa se creó la Escuela de Gramática y Filosofía. En cuanto a su mantenimiento (esencialmente las cátedras de filosofía y latinidad) dependían del convento de franciscanos, impartiéndose las clases en una casa particular que se arrendaba al cabildo mientras se construía el edificio. Esta forma de mantenerse el colegio, continuó incluso con Liborio Mejía, nacido en Rionegro (Antioquia) el 28 de julio de 1792. Hijo de don José Antonio Mejía, quien fue regidor alcalde mayor de la provincia de Rionegro y de doña María Gutiérrez. Se interesó desde siempre por los estudios, ejerciéndolos en el Colegio Mayor de San Bartolomé en Bogotá, donde fue becado desde 1808 hasta terminar sus estudios en 1812. En Bogotá se ocupó junto a su familia en negocios comerciales dedicados al transporte de mercancías en lugares como Tunja, Antioquia y Santa Fe. En 1813 fue nombrado para ocupar el cargo de director del Colegio Provincial de Antioquia, impartiendo a su vez la cátedra de filosofía. Pero su estancia frente a la institución fue interrumpida en ese mismo año al ser nombrado por José María Ortíz, miembro del cabildo de la Villa, para que Mejía acompañara a Francisco José de Caldas a cumplir con trabajo militar; al tener que partir, cedió su cátedra a José Félix de Restrepo. En su carrera militar, Liborio Mejía se destacó como jefe de tropa debido a la buena formación pedagógica que tuvo en sus estudios. También sobresalió en su interés por continuar aprendiendo en su tiempo libre, lo que se vio reflejado en la traducción al castellano que realizó de algunos manuales militares franceses. Después de volver del sur con Caldas no pudo ejercer de nuevo sus labores pedagógicas, dado que debía marchar otra vez con el coronel José María Gutiérrez; no obstante alcanzó gran reconocimiento debido a sus logros. Fue nombrado Vicepresidente de la República el 22 de junio de 1816 contando con apenas 24 años. Un mes después de su nombramiento se dio la reconquista española y fue arrestado en combate. Fue fusilado en Santa Fe el 3 de septiembre del mismo año."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/liborio-mejia.jpg",
+                        "caption": "Foto oficial del rector Liborio Mejía"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1813" },
+                  
+                    "text": {
+                        "headline": "José Félix de Restrepo",
+                        "text": "Existe una serie de disputas con respecto al lugar de nacimiento de José Félix de Restrepo, pues a pesar de que algunos documentos del archivo histórico nacional aluden a Medellín, hay quienes atribuyen a Envigado como posible lugar de origen. Lo cierto es que nació el 28 de noviembre de 1760 siendo hijo de Vicente Restrepo y Catalina Vélez de Rivero. Fue uno de los cuatro hijos de esta pareja, quienes les brindaron una buena educación (asunto complicado para la época por razones económicas), siendo dos de ellos sacerdotes, y los otros abogados, donde se incluye José Félix de Restrepo. Cursó sus primeros estudios en el Colegio de San Bartolomé, donde se dedicó de lleno al desarrollo de su educación. Alcanzó en 1780 a ser licenciado en leyes y graduado como doctor en derecho civil. Fue maestro de filosofía desde 1782 a 1812, y después de graduarse llegó a Medellín a dictar la cátedra a un seminario franciscano. Tuvo grandes experiencias como docente, destacándose por su capacidad a la hora de preparar a sus alumnos en oratoria logrando brillantes discursos públicos, y mediante sus buenas prácticas fue haciéndose acreedor de méritos reconocidos por sus alumnos. En 1813, recién llegado de Popayán fue elegido para reemplazar a Liborio Mejía, además para hacerse cargo de enseñar en la Escuela de Filosofía y Matemáticas. El nuevo papel que asumía Restrepo en la escuela tuvo énfasis en métodos modernos para la enseñanza de la física y las matemáticas. Restrepo no era partidario de las formas de educación religiosas y sus estudiantes parecían estar en un curso de matemáticas más que de filosofía. Uno de los aspectos en que más sobresalió el doctor Restrepo fue en su actitud antiesclavista; abogó por la libertad de esclavos, especialmente los partos de las mujeres esclavas, y en general la libertad de este grupo marginado. José Félix de Restrepo falleció en Bogotá el 23 de septiembre de 1832."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/josefelix-derestrepo.jpg",
+                        "caption": "Foto oficial del rector José Félix de Restrepo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1822" },
+                    "end_date": { "year": "1824" },
+                    "text": {
+                        "headline": "José María Uribe Mondragón",
+                        "text": "Hijo de don Ignacio Uribe Mejía y doña Ana Joaquina Vásquez Mondragón, José María Uribe nació en Medellín el 6 de abril de 1789. Realizó sus estudios junto a fray Rafael de la Serna, antiguo rector del Colegio Provincial de Antioquia. Al terminar sus estudios recibió el sacerdocio en la iglesia del monasterio de Santa Inés en Bogotá; buena parte de su trabajo como cura la realizó principalmente en Hatoviejo, en el municipio de Bello (Antioquia). Para 1822 empezó a funcionar el Colegio de Antioquia bajo la dirección de Uribe Mondragón, sin embargo se cree que entre 1815 y 1822 posiblemente siguió operando la academia de ingenieros militares instaurada por Francisco José de Caldas. Durante este período de la reconquista española se hizo lo posible por levantar las actividades en el lugar, especialmente las cátedras de filosofía y matemáticas, que fueron la visión principal desde que se creó el plantel. Antes de que se diera la apertura del Colegio de Antioquia hubo un suceso significativo para las bases de la educación de ese entonces. En 1821, el Congreso de Cúcuta decretó que los conventos con menos de ocho religiosos debían ser suprimidos; esto se dio mediante un decreto que cobijaba la conformación de escuelas de primeras letras en todas las villas (decreto del 28 de Julio de 1821). Un año después se dio a conocer el “proyecto educativo de Santander”, como lo denominó la maestra María Teresa Hincapié, en el que Francisco de Paula Santander dictó el decreto para dar ejecución a la creación de colegios en diferentes ciudades, conformándose a su vez el “decreto de creación del colegio de Antioquia”. De esta forma se resalta la función del coronel Francisco Urdaneta quien promovió la conclusión del edificio donde funcionó el colegio, con aportes que hicieron diferentes personas para esta labor, dándose apertura nuevamente al colegio el 23 de enero de 1823, siendo cabeza del plantel el señor José María Uribe Mondragón, quien también se encargó de dictar las clases de metafísica, latín, castellano y filosofía. Lo que destacó este periodo de la historia de la institución fue que el Colegio de Antioquia dejó de ser un colegio de la comunidad religiosa para pasar a ser parte del gobierno nacional, con la particularidad de que las rentas no corrieron a cargo de sus nuevos dueños, sino a manos de la comunidad, pues la supervisión de la institución estuvo a cargo del gobierno, mientras las rentas y el mantenimiento fueron asumidos por vecinos del lugar. Así como hubo cambios en diferentes aspectos (social, político y económico) también se pudo vislumbrar una continuidad entre esta nueva visión de la educación (decreto de 9 de octubre de 1822 por Santander) y el método que se venía dando desde los franciscanos: por un lado se mantiene la escuela de primeras letras, por otro lado se dan las mismas cátedras y por último –siendo ésta una de las más importantes– se continúa con la abolición pausada de la teología y por ende de los preceptos religiosos. Además de los anteriores cambios, es relevante mencionar que fue en este momento donde se comenzó con la idea (y con el terreno) que mantuvieron los franciscano para levantar el edificio de lo que es hoy la universidad. Ahora bien, para José María Uribe Mondragón fue un tanto complicada la situación económica en el colegio, por ende en 1824 renunció a su cargo. En 1833 el Pbro Uribe muere dejando como testamento sus obras literarias, entre las cuales se cuentan trabajos de literatura y de teología."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector José María Uribe Mondragóna"
+                        
+                    }
+                }, 
+
+                {
+                    "start_date": { "year": "1823" },
+                    "end_date": { "year": "1825" },
+                    "text": {
+                        "headline": "Francisco Antonio Obregón",
+                        "text": "Francisco Obregón nació en Barbosa (Antioquia) el 2 de abril de 1801 en el hogar de don Pedro Antonio de Obregón y Uribe y doña María Josefa Muñoz. En 1819 comenzó sus estudios en el Colegio Mayor de Nuestra Señora del Rosario y fue de allí donde se graduó como doctor en jurisprudencia. Luego de haber concluido su carrera volvió a su pueblo natal para ocuparse de la enseñanza de los jóvenes del lugar. Su participación en la Institución se dio desde que estuvo a cargo el Pbro. José María Uribe Mondragón, puesto que Obregón ejerció como vicerrector y catedrático en el Colegio de Antioquia. No obstante, en 1823 Enrique Umaña, intendente de Cundinamarca, lo designó para que se hiciera cargo de las materias de aritmética, álgebra, trigonometría y filosofía. Fue un año después que ocupó el cargo de rector de la Institución fomentando un cambio relevante en la instauración de las materias de química y mineralogía además de las cátedras que se venían impartiendo. Ahora bien, en los asuntos políticos y sociales que rodearon a Obregón, se destacó el hecho de haber sido desterrado del país, por no coincidir con el gobierno nacional y se internó en las Antillas, donde se dedicó a dictar clases de idiomas (inglés, francés y castellano). Para 1848 volvió al país y fue nombrado gobernador de Mompox, pero nuevamente se vio afectado por el destierro debido a la labor que ejerció como secretario en la administración que sucedió de la dictadura de José Hilario López; por ello se le tildó de colaborador y tuvo que huir a Venezuela y luego a La Habana. Falleció en Medellín el 29 de octubre de 1869."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/francisco-a-obregon.jpg",
+                        "caption": "Foto oficial del rector Francisco Antonio Obregón"
+                        
+                    }
+
+        
+                },
+
+                {
+                    "start_date": { "year": "1825" },
+                    "end_date": { "year": "1826" },
+                    "text": {
+                        "headline": "Estanislao Gómez Barrientos",
+                        "text": "Estanislao Gómez Barrientos nació en Medellín en 1798, siendo hijo de don José Joaquín Gómez Londoño y doña María Manuela Barrientos. Estudió jurisprudencia en el Colegio de San Bartolomé, y en 1815 se graduó como doctor en leyes de la Universidad Santo Tomás. Es importante mencionar que tuvo parentesco familiar con el antiguo rector, debido a que este último se casó con la hermana de Gómez Barrientos. Desempeñó varios cargos antes de desempeñarse como rector. Fue precisamente gracias a la responsabilidad y buen manejo que tuvo durante sus cargos políticos, que en 1825 se integró como rector de la Institución, pero un año después renunció al cargo y viajó a Bogotá para ejercer como abogado en asuntos de la república. Fue nombrado nuevamente rector en 1839 y a su vez se encargó de dictar la cátedra de jurisprudencia civil. Murió el 3 de julio de 1852 en Antioquia, siendo considerado un hombre ilustrado de su época."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/estanislao-gomez.jpg",
+                        "caption": "Foto oficial del rector Estanislao Gómez Barrientos"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1826" },
+                    "end_date": { "year": "1827" },
+                    "text": {
+                        "headline": "Timoteo Duarte",
+                        "text": "Su participación en el Colegio de Antioquia se vislumbra por periodos, puesto que fue el encargado del plantel en ausencia del rector titular el Presbítero Estanislao Gómez, quien dejó la rectoría en 1826 para ocupar una curul como representante de Antioquia en la capital de la república. Duarte estuvo al frente de la Institución hasta abril de 1827, cuando llegó a hacerse cargo fray Juan Antonio Pino, pues la situación económica del Colegio presentaba graves problemas. Nuevamente sucedió a este último el 25 de julio de 1827 hasta 1828, año en el que asumió la rectoría José María Galavis. Luego de las diferentes sucesiones, el señor Duarte ejerció como profesor y rector interino en diferentes colegios y lugares. Después de haber salido del Colegio de Antioquia se encontraron algunas cuentas presentadas por el señor Emilio Robledo, en que se declaró un mal manejo económico de la Institución por parte de Timoteo Duarte. Este filósofo también fue rector interino del Colegio de Santa Librada de Cali, además de fungir como secretario y profesor universitario en Popayán. Duarte murió en Palmira (Valle) en 1868."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Timoteo Duarte"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1827" },
+                    "end_date": { "year": "1828" },
+                    "text": {
+                        "headline": "Fray Juan Antonio Pino",
+                        "text": "Nació en Rionegro (Antioquia), se dice que bajo el cuidado de don José Joaquín Pino y doña Bárbara Montoya, ya que no se ha encontrado el documento que lo verifique, aunque se sabe que fue bautizado en 1794 y que realizó sus estudios en el Colegio Mayor de Nuestra Señora del Rosario. Al terminar sus estudios pasó a la formación religiosa en San Francisco. En su labor como religioso se dedicó a enseñar, no obstante en 1818 fue trasladado a Cali como corista y en 1820 acompañó al ejército como capellán. De allí en adelante se dedicó a instruir en gramática y artes en el mismo convento de San Francisco. En 1826 llegó a Antioquia para dictar las clases de matemáticas y lógica, actividades en las que se reconoció por tener gran conocimiento del campo. En cuanto a su rectorado, Julio Cesar García menciona su posesión en 1827 en el mes de abril y tres meses después se retiró del cargo para entregarse de lleno al movimiento religioso en la parroquia de San Martín de Cancán. Durante este periodo rectoral, el presidente Simón Bolívar firmó un decreto que le concedió al Colegio de Antioquia la enseñanza de la jurisprudencia en todos sus campos. Así como no se tiene certeza de la fecha de su nacimiento, tampoco se conoce la fecha de su deceso, puesto que el acta de defunción no se ha encontrado en Rionegro, donde falleció según los libros parroquiales correspondientes."
+                    },
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Fray Juan Antonio Pino"
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1828" },
+                    "end_date": { "year": "1829" },
+                    "text": {
+                        "headline": "José María Galavis",
+                        "text": "Nació en Santa Fe de Bogotá en 1806 y fue educado por un oidor (antiguo juez), además de sus padres el señor Eustaquio Galavis y Hurtado y su esposa Teresa de Lasquetti. Sus estudios en grado de doctor los realizó en San Bartolomé, teniendo como profesor al ex rector del colegio el señor José Félix de Restrepo. Uno de los asuntos más relevantes que se puede vislumbrar en su rectorado fue la disputa que entabló con Simón Bolívar con el fin de suprimir el plan de estudios que implementó en 1822 el general Santander. Bolívar deseaba que se eliminaran principalmente las cátedras de jurisprudencia en todo el país y además se implementaran materias de ciencias naturales que eran más necesarias para el pueblo. El 25 de octubre de 1828, Bolívar logró la reforma (no sustitución). Después de la conspiración septembrina, en cumplimiento del decreto del 25 de octubre, el Colegio de Antioquia es cerrado y sus funciones se suspenden durante el resto de ese año. Sin embargo, para 1832 el presidente José María Obando restableció algunas de las cátedras que suprimió Bolívar durante su presidencia, anexando algunas materias jurisprudenciales. Es significativa la forma en que se le dio el reemplazo a Galavis, puesto que se menciona en una carta dirigida al intendente de Cundinamarca en nombre del presidente, su condición de joven para ocupar el puesto de rector del colegio."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/jose-maria-galvis.jpg",
+                        "caption": "Foto oficial del rector José María Galavis"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1829" },
+                    "end_date": { "year": "1830" },
+                    "text": {
+                        "headline": "Pbro. José María Botero",
+                        "text": "Nació en 1789, hijo de don Félix Joaquín Botero y doña María Francisca Cadavid. Cursó sus estudios en el Colegio de Nuestra Señora del Rosario, tras lo cual fue ordenado sacerdote en 1818 por el obispo de Popayán. Durante su vida eclesiástica se dedicó a la enseñanza, pues desde siempre estuvo ligado a esta labor siendo reconocido por sus alumnos como un buen maestro. Sus prácticas académicas le permitieron llegar a la capellanía de San Lorenzo –en Medellín– a seguir dictando clases, incluso materias que ya venía impartiendo en el Colegio de Nuestra Señora del Rosario como el derecho canónico y lengua latina, entre otras. Además de las actividades que ejercía como profesor también fue rector del mismo colegio y enseñó en otros lugares. Toda su vida estuvo marcada por la enseñanza, y justamente esto lo condujo a actuar en contra de los preceptos que el gobierno tenía para la educación, lo que le significó no ser partícipe de las “tendencia utilitaristas de la educación”, como lo afirma la historiadora María Teresa Uribe. En vista de esta diferencia de ideales, el presbítero fomentó conflictos dentro de las aulas de clases. Fue llevado a juicio en 1835 debido a sus conductas conflictivas y se le dio orden de captura, no obstante se le formuló un segundo juicio público, en el que fue condenado a muerte. Algunas personas abogaron por él alegando que sufría de locura y de esta forma se le realizaron estudios que efectivamente encontraron algo de cierto en el diagnóstico. A esta manifestación por parte de las personas que recurrieron en su auxilio se le llamó “la revolución del padre Botero”. Cabe destacar que para esta época el interés por parte del gobierno para crear una educación basada en principios de renovación industrial, significaba dejar un poco de lado los preceptos religiosos, y fue esto justamente lo que movió a la revolución que ejerció el sacerdote."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Pbro. José María Botero"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1830" },
+                    "end_date": { "year": "1833" },
+                    "text": {
+                
+                        "text": "Desde 1830 el Colegio de Antioquia pasó por una difícil situación que lo llevó a ser cerrado durante cuatro años. Luego de que el presidente José María Obando y el Congreso autorizaron nuevamente al Colegio de Antioquia para dictar las cátedras de jurisprudencia y de que padres de familia y miembros de la sociedad antioqueña pidieron que se abrieran las puertas del Colegio, finalmente la petición fue tenida en cuenta por el Congreso de la República. El gobierno dictó un decreto que reorganizó la Institución y le otorgó el nombre de Colegio Académico de Antioquia; además, dispuso que se mantuvieran las cátedras de gramática y filosofía, y que se crearan las de historia e instituciones canónicas, disciplina e historia eclesiástica, suma de concilios, química y mineralogía."
+                    }
+                },
+
+
+
+                {
+                    "start_date": { "year": "1833" },
+                    "end_date": { "year": "1836" },
+                    "text": {
+                        "headline": "Manuel Tiberio Gómez Restrepo",
+                        "text": "Nació en Rionegro en 1810. Sus estudios los realizó en el Colegio de Antioquia y en la Universidad Santo Tomás en Bogotá, y tras graduarse complementó con otros aspectos académicos como los idiomas (inglés, francés y latino) además de lo jurídico. Antes de que iniciara la rectoría de Gómez Restrepo, la Institución estuvo cerrada debido a las secuelas que dejó la dictadura del general Urdaneta, lo que afectó el funcionamiento económico del colegio debido al retiro de las rentas que llegaban a éste por parte del gobierno . Por lo tanto en 1831, el gobernador Francisco Montoya Zapata, junto con las personas interesadas en la educación, notaron la necesidad de continuar con la enseñanza que se venía impartiendo en el plantel y abrir nuevas escuelas gratuitas, razón por la cual el gobernador decidió recolectar fondos con el aporte de algunos lugareños. Fue así como en 1833 se dictó el decreto que autorizaba reabrir la Institución que pasó a llamarse Colegio Académico de Antioquia, siendo designado como rector el señor Manuel Tiberio Gómez Restrepo. Goméz Restrepo también se desempeñó como secretario de la Cámara Provincial y fungió como fiscal acusador en el juicio que se entabló en contra del anterior rector José María Botero."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Manuel Tiberio Gómez Restrepo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1836" },
+                    
+                    "text": {
+                        "headline": "José María Vélez Mateus",
+                        "text": "José María Vélez Mateus realizó sus estudios en Bogotá, donde se graduó con el título de doctor en jurisprudencia. Antes de ser rector del Colegio Académico de Antioquia, ya había tenido experiencia en cargos públicos como fiscal provisional, lo que le permitió tener mayor aceptación y participación en la sociedad . En 1836 se hizo cargo de la rectoría del colegio, pero a su vez se desataron algunos problemas económicos en la institución, uno de ellos fue la dificultad de la contratación a los docentes (precisamente por la “escases de dinero”) quienes al final solo fueron contratados mediante la disponibilidad monetaria de algunos ciudadanos . No obstante en el periodo rectoral de Vélez Mateus, no solo ocurrieron rencillas económicas, sino que se habla de una agitación cultural y política. Esta última se debió principalmente al disgusto de los padres de familia, quienes estaban preocupados por las enseñanzas a las que volvía el colegio según las directrices educativas del país (pues con Santander se puso en práctica las cátedras de Bentham). Muchos de los académicos del momento al ser educados con algunos preceptos Benthamitas no les disgustaba del todo la idea de restablecer la cátedra, pero los padres de familia optaban por una enseñanza más dedicada a la moral y la religión."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector José María Vélez Mateus"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1836" },
+                    "end_date": { "year": "1838" },
+                    "text": {
+                        "headline": "Mariano Ospina Rodríguez",
+                        "text": "Mariano Ospina nació en Cundinamarca en 1805. Cursó sus estudios de jurisprudencia en el Colegio de San Bartolomé, donde demostró desde siempre su interés por la labor educativa, razón que explica su constante preocupación por la enseñanza. Llegó a Antioquia buscando refugio, ya que era perseguido por sus arraigadas creencias democráticas, y fue en este lugar donde es considerado, según Luis López de Mesa, como “uno de los seis colombianos que en el siglo XIX ejercieron influencia más decisiva en los destinos de Antioquia”. La época en la que Mariano Ospina se desempeñó como rector del colegio (y en su recorrido personal), representó un avance a nivel educativo debido a los planteamientos que propuso. En 1826, antes de llegar a la rectoría del Colegio Académico de Antioquia, comenzó a levantar una institución que tuvo como base una enseñanza más práctica que teórica. Precisamente fue esta visión pragmática del señor Ospina lo que permitió que se hiciera cargo de ciertos asuntos relacionados con el cumplimiento de este pensamiento. Una de sus prioridades educativas fue fomentar la creación de escuelas normales en todas las capitales, puesto que tendrían un plan de estudios con dirección pragmática. Entre ello cabe destacar la formalización de la enseñanza militar como parte del plan de estudios (por la necesidad de tener ejército de reserva), debido a bloqueos en la costa por parte de Francia e Inglaterra. Otra de las particularidades de Ospina fueron las enseñanzas que transmitió a sus discípulos en cuanto a la libertad de objetar las lecturas que hacían, no obstante es válido mencionar que su trayectoria intelectual se enriqueció con las investigaciones en la religión cristiana y la filosofía racionalista. Además de ser rector de la Institución, fue un personaje político destacado en el país al ocupar varios cargos públicos como docente en diversos colegios, gobernador de Antioquia (1845) y presidente de Colombia (1857-1861). Por otro lado, uno de los hechos más destacados en la vida política de Mariano Ospina fue su participación en la Guerra de los Supremos –un conflicto interno del país, en el cual los pleitos religiosos terminaron en problemas políticos que permitieron el enfrentamiento entre dos líderes: José María Obando y José Ignacio de Márquez, candidatos a la presidencia, formando parte de uno de los dos bandos. Luego de ser condenado a prisión en Cartagena, Ospina Rodríguez huyó a Guatemala donde permaneció hasta 1871 cuando regresó a Medellín, lugar donde 14 años después falleció un 11 de enero de 1885."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/mariano-ospina-rodriguez.jpg",
+                        "caption": "Foto oficial del rector Mariano Ospina Rodríguez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1838" },
+                    
+                    "text": {
+                        "headline": "Joaquín Emilio Gómez",
+                        "text": "Joaquín Emilio Gómez nació en 1807 en Medellín, donde también cursó sus estudios en el Colegio de Antioquia bajo la rectoría del Pbro. Uribe Mondragón; además realizó estudios de jurisprudencia en el Colegio de San Bartolomé, del que se graduó en 1831. Gómez formó parte del Colegio Académico de Antioquia como rector interino, en reemplazo de Mariano Ospina Rodríguez, quien se ausentó en 1838 del cargo. Tras complementar sus estudios y debido al buen desempeño que obtuvo, se le ofreció ser el representante al Consejo de la República, trabajando allí con personajes que apoyaban la candidatura del señor José Ignacio de Márquez en la mencionada Guerra de los Supremos. Su participación directa en la Institución comenzó desde su época de estudiante en este mismo plantel, pasando por la labor de profesor de varias materias como la cátedra de derecho civil y derecho internacional, entre otras. Fue también vicerrector durante estos mismos años. En 1838, Joaquín Emilio Gómez renunció al rectorado y se dedicó a otros cargos públicos."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/joaquin-emilio-gomez.jpg",
+                        "caption": "Foto oficial del rector Joaquín Emilio Gómez"
+                        
+                    }
+                },
+
+
+                {
+                    "start_date": { "year": "1838" },
+                    "end_date": { "year": "1839" },
+                    "text": {
+                        "headline": "Juan Nepomuceno Pontón",
+                        "text": "Juan Nepomuceno Pontón nació en Medellín en 1816. Realizó algunos de sus estudios en Bogotá ejerciendo después bajo el título de abogado. Posteriormente, en 1837 trabajó como profesor en Medellín en el Colegio Académico de Antioquia, y un año después fue nombrado rector interino del mismo plantel, tras la renuncia del antiguo encargado el señor Joaquín Emilio Gómez. La formación que predicaba Juan Nepomuceno era principalmente basada en el utilitarismo. También fungió como gobernador de la provincia en 1840, siendo su secretario el señor José María Facio Lince, quien posteriormente sería rector de la Institución. En 1839, un año después de iniciar su periodo rectoral, Pontón renunció a este cargo aduciendo motivos personales."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Juan Nepomuceno Pontón"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1839" },
+                    "end_date": { "year": "1840" },
+                    "text": {
+                        "headline": "Estanislao Gómez Barrientos",
+                        "text": "Gómez Barrientos volvió a hacerse cargo de la rectoría en 1839, dado que ya había ocupado el mismo en el periodo de 1825-1826. Se encargó de dictar la cátedra de jurisprudencia civil, además de trabajar en conjunto con el vicerrector Antonio María Jiménez, quien ingresó a la rectoría en 1840. Estanislao Gómez Barrientos nació en Medellín en 1798, siendo hijo de don José Joaquín Gómez Londoño y doña María Manuela Barrientos. Estudió jurisprudencia en el Colegio de San Bartolomé y en 1815 se graduó como doctor en leyes de la Universidad Santo Tomás. Gómez Barrientos desempeñó varios cargos antes de fungir como rector. Fue precisamente gracias a la responsabilidad y buen manejo que tuvo durante sus cargos políticos, que en 1825 se integró como rector de la Institución, pero un año después renunció al cargo y viajó a Bogotá para ejercer como abogado en asuntos de la República. Falleció el 3 de julio de 1852 en Antioquia, siendo considerado un hombre ilustrado de su época."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/estanislao-gomez.jpg",
+                        "caption": "Foto oficial del rector Estanislao Gómez Barrientos"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1840" },
+                    "end_date": { "year": "1843" },
+                    "text": {
+                        "headline": "Antonio María Jiménez",
+                        "text": "La participación de Antonio María Jiménez en el Colegio Académico de Antioquia se dio inicialmente en 1839 en calidad de profesor, aunque ya había sido alumno de algunos profesores de la institución. Durante su periodo rectoral la Cámara Provincial dispone que la capilla del Colegio pase a manos del obispo, pues la institución educativa no contaba con los recursos necesarios para repararla. Jiménez también ocupó en diferentes momentos de la historia de la Institución algunos cargos relevantes como vicerrector así como rector encargado durante la ausencia de Estanislao Gómez. Además, para 1851 laboró como secretario del entonces rector Emeterio Ospino, encargándose nuevamente del rectorado a finales de ese mismo año hasta su muerte un año después. "
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Antonio María Jiménez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1844" },
+                    "end_date": { "year": "1846" },
+                    "text": {
+                        "headline": "Los Jesuitas: José Segundo Laínez, Joaquín Freyre y Luis Amorós",
+                        "text": "El momento en que llegan los jesuitas al Colegio Académico de Antioquia es el periodo posterior a la Guerra de los Supremos, por ende, fue este instante en que se vislumbró el disgusto por parte de docentes, alumnos y los mismos vecinos del lugar por la clase de formación que recibían en el claustro, es decir, con la guerra se llegó a pensar que era necesaria la presencia religiosa para propiciar un manejo adecuado a la Institución. El arribo de estos religiosos se produjo esencialmente gracias al mandato del gobernador Juan María Gómez, acompañado de algunos personajes ilustres del momento como Rafael Mosquera, quien era promotor de que la presencia jesuita era de vital importancia para quienes seguían el plan de estudios de Santander. De esta forma llegaron los primeros jesuitas encargados: Joaquín Freire, Luis Amorós y José Segundo Laínez, quienes tuvieron una buena acogida por parte de los habitantes de la provincia. Se ocuparon no solamente del Colegio Académico, sino que también realizaban las misiones en otros lugares de la provincia. Una de las actividades adicionales que ejecutaron fueron los sermones que se ofrecieron en la iglesia (antes administrada por los franciscanos y que pasó a manos jesuitas) a los cuales concurrían muchos fieles participando activamente de los asuntos espirituales. Sin embargo, y a pesar de la buena forma en que los religiosos se hacían cargo de la comunidad, no desaparecían los antiguos estudiantes que optaban por la reforma Santanderista. Algunos de estos personajes pertenecían a la llamada comunidad de “amigos del país”, descrito por María Teresa Uribe como una asociación política, cultural y literaria de orientación liberal, los cuales tenían una visión más pragmática en cuanto al modelo de enseñanza. Estos “amigos del país” al mando de José María Faciolince (quien posteriormente fue rector del colegio), se encargaron de lanzar propuestas en contra de la compañía, defendiendo el hecho de que era necesaria una educación basada en preceptos críticos y de libre pensamiento. En el momento de la pugna entre religiosos y políticos, Mariano Ospina gobernador de la provincia abogó por la presencia jesuita en el Colegio, pero la Asamblea Providencial se opuso a esto debido a que la participación de los “amigos del país” tenía una alta influencia en el medio. Así fue como la compañía de Jesús se vio obligada a dejar el Colegio Académico nuevamente en manos de la provincia."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Los Jesuitas: José Segundo Laínez, Joaquín Freyre y Luis Amorós"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1846" },
+                    "end_date": { "year": "1850" },
+                    "text": {
+                        "headline": "Jose María Facio Lince",
+                        "text": "Nació en Medellín en 1816. Realizó sus estudios en el Colegio Académico y posteriormente se graduó como Doctor en Jurisprudencia en el Colegio de San Bartolomé. Ejerció primero como profesor de matemáticas y más tarde recibió la rectoría de los jesuitas siendo el líder de los llamados 'amigos del país' o 'afilosofados', grupo antijesuita que representó un cambio en la enseñanza impartida en la institución. Esta acción le valió la expulsión en 1848, siendo reemplazado por Cosme Zuleta, lo que causó descontento general en el Colegio, y por consiguiente fue llamado nuevamente a ocupar el cargo hasta 1851. En su rectorado introdujo materias como economía política, derecho de gentes y física mecánica. De esta forma, fue esa la etapa en que gracias a la participación laica en la Institución se conformó el “radicalismo antioqueño”, ejerciendo una participación política activa y permitiendo la libre enseñanza en el campo académico. Sin embargo, el Colegio fue nuevamente blanco de la guerra civil que se dio durante 1851 y 1854, siendo precisamente el claustro el que albergó a los actores de esta guerra generada por conservadores en contra del gobierno de José Hilario López. Facio Lince es recordado como uno de los abogados y oradores más importantes de Antioquia. Murió en 1853."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/jose-maria-faciolince.jpg",
+                        "caption": "Foto oficial del rector Jose María Facio Lince"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1850" },
+                    "end_date": { "year": "1851" },
+                    "text": {
+                        "headline": "Pbro. Emeterio Ospino",
+                        "text": "Nació en Mompox en 1807. Durante su periodo rectoral no se destacan grandes eventos debido a su corto tiempo al frente del Colegio Académico de Antioquia. Se destacó por el hecho de su oposición constante a la participación de los jesuitas en el lugar. Por otro lado se sabe que dictó algunas clases en el Colegio, pero para esta época se dan revueltas que lo dejan en muy mal estado, pues los acontecimientos políticos interrumpieron nuevamente la cotidianidad del lugar. En esta ocasión, el rector obedeció la orden de ceder el edificio para el alojamiento de las tropas dirigidas por Eusebio Borrero. La biblioteca fue saqueada."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Pbro. Emeterio Ospino"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1851" },
+                    "end_date": { "year": "1852" },
+                    "text": {
+                        "headline": "Antonio María Jiménez",
+                        "text": "Fue muy poco el tiempo en que estuvo a cargo de la institución el señor Antonio María Jiménez. El autor Julio Cesar García menciona la revolución de 1851 en la que (como se había mencionado antes) el colegio es tomado como albergue militar (1 de Julio de 1851). Durante su administración se arrienda una casa situada en la Plazuela San Roque para continuar las actividades académicas, pues en las instalaciones permanecían las tropas de Eusebio Borrero. Sin embargo, al retomar las labores fue corto el tiempo en que Jiménez se hizo cargo de la rectoría, dado que murió poco después en 1852. El 1 de abril de 1852, el día de la Virgen de los Dolores fue señalado por el rector para la reapertura de la Institución. Esta vez recibió el nombre de Colegio Provincial."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Antonio María Jiménez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1852" },
+                    
+                    "text": {
+                     
+                        "text": "En 1850 durante el gobierno de José Hilario López se expidió una ley que cambió la forma de enseñanza, pues se permitió la instrucción académica en cualquier recinto (tanto público como privado). Además, quienes se encargaban de impartirla no necesariamente tenía que demostrar un título académico, esto significó poder obtener un título universitario sin importar la condición. Este cambio abrupto se dio al mismo tiempo que las guerras civiles (lo que generó la política educativa como consecuencia) en contra de José Hilario López, debido a esto se cerró el Colegio Académico para utilizarlo como cuartel. Luego de la inactividad del colegio, surgió nuevamente la labor académica en el recinto, pasando a ser el Colegio Provincial de Medellín. Sin embargo, la apertura del colegio se dio según los preceptos de la nueva forma de enseñanza erigida por José Hilario López."
+                    },
+
+                },
+
+                {
+                    "start_date": { "year": "1852" },
+                    
+                    "text": {
+                        "headline": "Nicolás Florencio Villa",
+                        "text": "Este abogado nació en 1812 en San Pedro, Antioquia. Estudió en el Colegio Académico y al finalizar llegó a Bogotá para poner en práctica los saberes obtenidos en jurisprudencia. Nicolás Florencio Villa fue periodista y redactor del periódico El amigo del país. Un hecho relevante durante su labor como rector del Colegio Provincial fue la ordenanza que se le encargó de la formación de una escuela de artes que funcionara anexa al colegio. También fue amplia la participación política ejercida por Florencio Villa. Entre ellas se cuenta: ejerció en varias cámaras provinciales, en sesiones del Congreso, fue abogado de los tribunales de la república, profesor del Colegio de Santa Teresa, ocupó el cargo de personero comunal y fue procurador del estado. Durante su periodo rectoral, Villa solicitó una licencia de seis meses para asistir al Congreso. Debido a esto fue necesaria la presencia de un reemplazo, siendo nombrado el señor José Ignacio Escobar."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/nicolas-florencio-villa.jpg",
+                        "caption": "Foto oficial del rector Nicolás Florencio Villa"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1853" },
+                    
+                    "text": {
+                        "headline": "José Cosme Zuleta",
+                        "text": "Este obispo ya había hecho parte del rectorado del Colegio (como rector interino) cuando estuvo a cargo el señor Facio Lince. No obstante su labor en la Institución siempre estuvo enmarcada en la docencia, desempeñándose además como cura – rector en el seminario . Cosme Zuleta también se desempeñó como rector del Colegio San José (actualmente La Presentación), durante 1851; también estuvo al mando de la catedral de Medellín en 1876."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/jose-cosme-zuleta.jpg",
+                        "caption": "Foto oficial del rector José Cosme Zuleta"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1854" },
+                  
+                    "text": {
+                        "headline": "Jorge Juan Hoyos",
+                        "text": "Jorge Juan Hoyos, originario de Buga, nació en 1812. Realizó sus estudios en Popayán donde recibió su grado de jurisconsulto en 1835. Después de recibir su título ejerció una amplia participación en el campo político. Algunos de sus cargos fueron: secretario de hacienda - una labor complicada debido a que durante este periodo el país atravesó por un momento de guerra (de los supremos) provocando una insuficiencia en la economía -, y miembro de la cámara de representantes. Para 1853, Hoyos tuvo que refugiarse en Antioquia donde continuó con su participación activa en cargos públicos como la gobernación. También llegó a la universidad al ser rechazado el puesto por el presbítero José Joaquín Isaza, quien posteriormente sería obispo de Medellín. Así, en 1854, tomó lugar como rector del Colegio. Por este entonces la Institución atravesaba por un momento de poca credibilidad entre el público, tanto así que el autor Julio César García menciona la presencia de solamente ocho estudiantes en el plantel (al principio del año); una de las causas puede ser 'el hecho de que se incrementó la participación en otros colegios como el de Mariano Ospina y el de la unión que dirigió José Cosme Zuleta' A finales de ese año, Hoyos llegó a su tierra natal para continuar trabajando en algunos de los puestos que ya había ejercido. Ya en 1861, desempeñó el cargo de administración de la aduana de Buenaventura, donde el 26 de marzo murió quemado a manos de los 'revolucionarios al mando del coronel Manuel Esteban Pedroza'."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/jorge-juan-hoyos.jpg",
+                        "caption": "Foto oficial del rector Jorge Juan Hoyos"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1855" },
+                    
+                    "text": {
+                        "headline": "Pedro Antonio Restrepo Escobar",
+                        "text": "Fue estudiante en el Colegio de Nuestra Señora del Rosario en Bogotá, en donde se graduó como abogado. No solamente se dedicó a ejercer el derecho, sino que también hizo parte de la Sociedad de los Amigos del país, en donde a su vez surgió una oposición en contra de la Compañía de Jesús. Para ello sería necesario adentrarse en un estudio sobre el asunto, debido a que resulta contradictorio la forma en que posteriormente cambió de idea hacia los ignacianos, dado que la misma Sociedad de Amigos no compartía buenas relaciones con la forma de enseñanza de esta orden. Restrepo Escobar ocupó varios cargos en Antioquia, algunos de ellos en lo administrativo, como representante al congreso y diputado a la legislatura de Antioquia. Como profesor enseñó en varios planteles como el Colegio de La Unión, de las señoritas María Josefa y Rosalía Restrepo, así como en escuelas normales de varones y de señoritas, entre otras. Mientras tanto en el Colegio Provincial (y en general en las instituciones de enseñanza secundaria y universitaria) se presentaba un artículo en el cual para poder obtener la licencia de graduado se debía cumplir con ciertos requisitos tales como el tiempo de los exámenes, las materias que se debían tomar, y la buena conducta, entre otros."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/pedro-antonio-restrepo.jpg",
+                        "caption": "Foto oficial del rector Pedro Antonio Restrepo Escobar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1855" },
+                   
+                    "text": {
+                        "headline": "Luis María Restrepo",
+                        "text": "Nació en en 1832 en Amagá (Antioquia), donde también cursó sus primeros estudios. Luego continuó en el Colegio Provincial de Medellín y finalmente los terminó en el Colegio Mayor de Nuestra Señora del Rosario en Bogotá. Recibió el grado en jurisprudencia, profesión que ejerció como juez principal del circuito de Medellín. Fue también gobernador del estado de Antioquia, secretario de hacienda, ocupó una curul en el senado de la República, e hizo parte del régimen militar. En 1855, Restrepo fue escogido para ocupar el cargo de vicerrector del Colegio, pero en este mismo año se le nombró rector interino para reemplazar al señor Antonio Restrepo Escobar, a quien le fue otorgada una licencia, así como en algunas otras ocasiones en que este último se encontraba de viaje. Posteriormente continuó dictando algunas materias (derecho criminal y hermenéutica, entre otras) en la Institución, incluso en 1872 cuando ya tenía por nombre Universidad de Antioquia."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/luis-maria-restrepo.jpg",
+                        "caption": "Foto oficial del rector Luis María Restrepo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1856" },
+                   
+                    "text": {
+                      
+                        "text": "Para la fecha en que se conoce como Colegio del estado de Antioquia (1856) se aplicó el proyecto educativo de Pedro Justo Berrio, reglamentando la enseñanza secundaria y profesional por ley. A esta forma educativa se interpusieron las guerras civiles que se dieron entre 1860 y 1864. Pedro Justo Berrio se hizo cargo del poder ejecutivo regional, y con ello aplicó algunos aspectos importantes en la labor educativa tales como: “el compromiso de los padres de familia en la educación de los menores y el papel de la urbanidad, la moral católica, las ciencias físicas y naturales, y las disciplinas artesanales en la formación de ciudadanos”. Además, se pensó en impartir la educación mediante la clasificación de los educandos, es decir, “para los pobres una enseñanza práctica de las artes y ciencias que se consideraban más útiles, así como la inconveniencia de los estudios filosóficos y literarios en la formación de la juventud”, dejando un poco de lado la clasificación social, y enfocándose un poco más en los nuevos aspectos que se le imprimen a la educación. Es necesario mencionar la importancia de la formación de nivel superior para que se diera un desarrollo pleno a la secundaria, evidenciándose en estos últimos la formación pedagógica de los primeros. A pesar del modelo que pretendía seguir Pedro Justo Berrio –modelo de corte francés (enciclopédico) más que el alemán (investigativo) – se logró combinar en la educación los diferentes saberes, tanto de aplicación inmediata como con la caligrafía, religión, y la gramática castellana, entre otras. A propósito del mando que ejerció el señor Berrío, éste a su vez proporcionó el cambio en el ámbito académico con respecto del estado, es decir, una de las razones del cambio de Colegio Provincial de Medellín a Colegio del estado de Antioquia, fue el desarrollo de nuevas materias, como la Escuela de literatura: idiomas patrio, latino, inglés y francés; la Escuela de matemáticas: aritmética, algebra y trigonometría rectilíneas, geometría práctica, geometría elemental y geografía; la Escuela de ciencias intelectuales: teodicea, ética, lógica y psicología, entre otras” que permitieron el desarrollo del estado. Se forja este ideal después de la creación del Estado Federal de Antioquia en 1856, periodo durante el cual el nuevo estado luchó por la autonomía de algunos aspectos con respecto al gobierno nacional. De esta forma, durante su rectorado, el señor Pedro Antonio Restrepo Escobar, junto con Berrío, abogaron por el libre desarrollo en el campo académico."
+                    },
+
+                    
+                },
+
+                {
+                    "start_date": { "year": "1859" },
+                    "end_date": { "year": "1861" },
+                    "text": {
+                        "headline": "Pbro. Mariano Antonio Sánchez",
+                        "text": "Este sacerdote nació el 26 de julio de 1812. Realizó sus estudios en el Colegio de Medellín, siguiéndole a ello su interés por la educación que recibió en el Seminario de Antioquia, en donde obtuvo las órdenes sacerdotales. Posteriormente se dirigió a dos comunidades en especial para aplicar sus conocimientos sobre misiones religiosas, lo que incluía “la salvación de las almas”. Su paso por la rectoría de la Institución fue en el año de 1859 en reemplazo del señor Pedro Antonio Restrepo Escobar. Además de estar al frente del Colegio, se encargó de dictar las cátedras de latín y religión. Durante este periodo se desató una nueva guerra civil que perjudicó las actividades académicas del Colegio y las instalaciones tuvieron que ser desocupadas para alojar las fuerzas al servicio de la Confederación. El gobierno departamental se esforzó por mantener las clases en medio de la guerra civil y dictó un decreto de reorganización de la institución. Sin embargo, el cierre del Colegio fue inevitable y las clases se suspendieron en julio de 1861. Alude el autor Julio César García a este personaje el poder que tenía en la defensa de los derechos de “las masas populares” así como del clero. Debido a esto, Sánchez debió afrontar una persecución en su contra que lo obligó a refugiarse en otros lugares, contrayendo una enfermedad que lo llevó a la muerte en 1864."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Pbro. Mariano Antonio Sánchez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1863" },
+                   
+                    "text": {
+                        "headline": "Benito Alejandro Balcázar",
+                        "text": "Debido a los problemas políticos que se dieron durante 1860, el Colegio del Estado de Antioquia fue cerrado, siendo atendido en ocasiones por el vicerrector Benito Balcázar. Pero en 1863, la gobernación propuso al señor José María Martínez encargarse de la rectoría, quien no aceptó el cargo, siendo nombrado Balcázar como rector interino. Ejerció como profesor en la Institución, además de la Normal Antioqueña. El autor Julio César García en su biografía de los rectores de la Universidad de Antioquia, menciona el retiro de Balcázar por hostilidades con el gobierno de turno. Además, en 1863, se hizo cargo de la gobernación por unos días mientras llegaba a ocuparse Pascual Bravo."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/.jpg",
+                        "caption": "Foto oficial del rector Benito Alejandro Balcázar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1864" },
+                   
+                    "text": {
+                        "headline": "Román de Hoyos",
+                        "text": "Nació el 31 de marzo de 1816 sin que se sepa con exactitud su lugar de nacimiento, debido a que existen documentos que certifican su bautizo en el Colegio Mayor de Nuestra Señora del Rosario, lo que sugiere la capital como ciudad natal. Realizó sus estudios en Antioquia donde pasó después al Colegio del Rosario y allí fue acreedor del título de “colegial de número”, y también obtuvo su título como doctor en derecho. Prontamente comenzó a ejercer como profesor en varias cátedras como literatura universal, pruebas judiciales, y ciencias administrativas, entre otras. Además de su labor como docente, también fue miembro de la sociedad de los “amigos del país” en la cual se tornó como enemigo de la Compañía de Jesús, pero muy pronto volvió a las toldas de esta última institución. Algunos de los cargos representativos que ocupó fueron: procurador general del estado de Antioquia, estuvo a cargo de curules en la legislatura provincial, y representante al Congreso en 1851. También se desempeñó como vicerrector de la Institución en 1864, mientras ésta permaneció cerrada; pero fue precisamente en este lapso de tiempo en que se realizaron algunos arreglos en el lugar. En ese mismo año, Pedro Justo Berrío presentó un decreto por medio del cual se permitió la apertura del Colegio, nombrando a su vez como rector y catedrático a Román de Hoyos. No obstante es necesario mencionar que su cargo estuvo opacado por la labor que ejerció Pedro Justo Berrio en el plantel, siendo este último el encargado de dictar algunas clases. César García describe el trabajo de Román de Hoyos como un “superintendente” del instituto. Hoyos se desempeñço como rector hasta 1873, dándose en su periodo rectoral un asunto esencial referido a la ley que establece que el lugar que funcionaba como Colegio del Estado de Antioquia serviría para la “Universidad de Antioquia”, nombre que recibió en 1871."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/ramon-de-hoyos.jpg",
+                        "caption": "Foto oficial del rector Román de Hoyos"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1871" },
+           
+                    "text": {
+                      
+                        "text": "El cambio de nombre dado a esta institución, solo se dio hasta 1871 bajo el rectorado del señor Ramón de Hoyos. Durante este proceso entró a mediar un conflicto competitivo que surgió debido a la instauración en ese entonces de la Universidad Nacional de Colombia, pues la creación de ésta trajo ciertos desacuerdos por parte de muchos personajes (conservadores), los cuales defendían “que era una obligación, no solo de católicos sino también de hombres honrados, negarle todo apoyo a la Universidad Nacional, pues ella y el Colegio del Rosario, afirmaban estos, se habían convertido en nidos de utilitarismo y de inmundicia”, convocando a su vez a que los padres de jóvenes estudiantes enviaran a sus hijos a una universidad católica para que aprendieran y promulgaran las ideas allí aprendidas. Así pues, debido a ello y otros asuntos de tipo jurídico, se presentó un proyecto con el cual la Alma Máter dejó de ser Colegio del Estado de Antioquia para convertirse en Universidad de Antioquia , bajo la ley 198 de octubre de 1871, sancionada por Pedro Justo Berrio, gobernador del estado de Antioquia, quieb posteriormente pasaría a ser rector de la universidad. Además de la competencia que significaba esta creación, la UdeA creó las mismas seis escuelas que tenía la Universidad Nacional: Literatura y Filosofía, Ingeniería, Ciencias Físicas y Naturales, Medicina, Jurisprudencia y Ciencias Políticas, y Artes y Oficios. No obstante, se implementaron con mayor fuerza los principios católicos, que en última instancia constituyen la idea esencial para marcar la diferencia entre estas dos universidades."
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1873" },
+                    "end_date": { "year": "1874" },
+                    "text": {
+                        "headline": "Pedro Justo Berrío",
+                        "text": "Sin duda Pedro Justo Berrío puede ser destacado como uno de los personajes más importante en materia de gobierno y administración en Antioquia, además de haber sido una de las caras más representativas del conservatismo antioqueño. Nació en Santa Rosa de Osos (Antioquia) en 1827. A los 16 años se dedicó por completo a sus estudios mayores en el seminario de San Fernando de Antioquia, en donde estudio filosofía y teología, culminando su aprendizaje de jurisprudencia en Bogotá. Fue precisamente en Antioquia donde se comenzó a ver el resultado de sus años en la academia; igualmente se destacó en el ámbito político con la ayuda que brindó a la deposición de los lideres liberales en 1851, convirtiéndose así poco a poco en líder conservador, aportando tanto en lo político como en el campo militar con el derrocamiento del líder liberal Pascual Bravo, ocurrido en 1864. Una vez fue proclamado presidente del estado, se encargó de ejecutar diversos proyectos que tendrían que ver con la administración correspondiente al nuevo cargo. Algunos de estos proyectos fueron la unidad nacional bajo la constitución de Rionegro, dándose a conocer así aun más en el campo gubernamental, y otro, no menos importante, es el apoyo que ofrece con la educación al sector social tanto en el espacio universitario como en las escuelas. Propuso en este último, un amplio escenario donde se obligó la participación de la sociedad para la elaboración de escuelas (muchas de ellas en el estado de Antioquia) y asistencia a las mismas. Además se destacó por velar en la protección de los indígenas y sus derechos. Uno de esos aspectos importantes que marcó el paso de Berrío por el campo educativo fue la contribución en el campo de los métodos de enseñanza y las diferentes formas de comunicar las ideas a los alumnos, que incluía métodos, elementos prácticos y una formación docente diferente. Pedro Justo Berrio impulsó en la Institución la consolidación de la formación técnica y aplicativa como la Escuela de Artes y Oficios que permitiera contribuir a la aplicación para la industria, un tema de interés que destacó la importancia universitaria en otras maneras de integrar estos dos campos de la sociedad (academia e industria). De esta forma puede demostrarse que no solamente se da un avance a nivel educativo, sino que este mismo objetivo se vio atravesado por el inicio de proyectos que hasta ahora han tenido un auge económico en gran cantidad, como por ejemplo el sector textilero antioqueño, que comenzó precisamente con la idea de Pedro Justo Berrío del “despegue de la industria en la región”. Berrío mantuvo un vínculo con la Universidad desde 1865, período durante el cual dictó algunas clases; pero en 1873 –cuando termina su periodo en la presidencia– fue nombrado para ponerse al frente de la Universidad de Antioquia, realizando un trabajo de unión y empuje académico al frente de ésta. La muerte de su esposa le generó complicaciones de salud y murió el 14 de febrero de 1875 en Medellín."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/pedro-justo-berrio.jpg",
+                        "caption": "Foto oficial del rector Pedro Justo Berrío"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1874" },
+                    "end_date": { "year": "1876" },
+                    "text": {
+                        "headline": "Pbro. José María Gómez Ángel",
+                        "text": "El sacerdote José María Gómez Ángel tuvo una amplia participación social y política en Antioquia. Este personaje contribuyó en algunos aspectos relacionados con mejoras en lo urbano, y estuvo vinculado a algunos cargos directivos en seminarios, universidades e incluso fue considerado como párroco de la catedral de Medellín. Estudió en la Escuela Lancasteriana en Medellín y luego en el Colegio Académico entre 1836 y 1840. Al finalizar su formación académica en la Institución, comenzó a cursar jurisprudencia hasta 1842. Luego de ello pasó al seminario de San Fernando donde cursó las materias necesarias para su ordenación como sacerdote. Se encargó de dictar algunas cátedras en el seminario, y debido al buen desempeño que tuvo en su ejercicio docente ocupó la vicerrectoría del seminario. En 1847 fue ordenado sacerdote por el señor Gómez Plata. El 6 de julio de 1874 fue nombrado rector de la Universidad de Antioquia en reemplazo de Pedro Justo Berrio, pero renunció dos años después debido a problemas de salud. No obstante su actividad en la Universidad se vio enmarcada por un nuevo plan de estudios que presentó en el mismo año de su nombramiento. Además se encargó de dictar la clase de latín, a la vez que ejercía como docente en el seminario de San Fernando, donde dictaba asignaturas como derecho canónico, teología dogmática, y sagradas escrituras, entre otras. Como cura realizó diversas labores en diferentes municipios de Antioquia como Barbosa, Concordia y Támesis entre otros, donde trabajó, según relata la socióloga María Teresa Uribe, a la par con los habitantes de cada lugar, logrando así diversos cambios en la estructura urbana, lo que no fue difícil porque anteriormente había tenido experiencias con la ingeniería y la arquitectura. José María Gómez Ángel falleció el 22 de marzo de 1896."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/jose-maria-gomez-angel.jpg",
+                        "caption": "Foto oficial del rector Pbro. José María Gómez Ángel"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1876" },
+                    
+                    "text": {
+                        "headline": "Ramón Martínez Benítez",
+                        "text": "Este abogado nació en 1824 en Cartago (Valle del Cauca). Su madre y abuelo siempre estuvieron muy pendientes de su educación, la cual realizó entre Cali, Cartago y Bogotá, sobresaliendo en su actividad académica. Estudió jurisprudencia siendo discípulo de personajes como José Ignacio de Márquez y Ezequiel Rojas. Al graduarse en la capital se trasladó a su tierra natal donde ejerció como abogado, pero para 1851 se vio obligado a salir de Cartago por culpa de la violencia. En medio de los sucesos de la época, varios pensadores debieron salir de sus lugares habituales para buscar refugio en Antioquia, entre ellos, el señor Ramón Martínez, quien con sus familiares se desplazó hasta Medellín, ocupándose inicialmente como juez de circuito y posteriormente en el tribunal superior. Durante su periodo como rector de la Universidad de Antioquia tuvo que afrontar el cierre de la Institución a causa de la guerra civil, razón por la cual las instalaciones fueron ocupadas por el ejército. Como magistrado fue testigo de los diversos problemas entre el ente político y eclesiástico en los Estados Unidos de Nueva Granada. Por otro lado, sirvió al estado participando en la asamblea constituyente, y en 1865 fue elegido senador. En 1879, debido a sus problemas de salud, se trasladó con su familia a Rionegro donde murió el 13 de septiembre de 1882."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/ramon-martinez-benitez.jpg",
+                        "caption": "Foto oficial del rector Ramón Martínez Benítez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1878" },
+
+                    "text": {
+                       
+                        "text": "La Alma Máter de los antioqueños ha debido afrontar cambios significativos que han aportado al desarrollo social, económico, político y educativo del país. Es por esto que la universidad pública más antigua del país a lo largo de su historia también mutó de nombre en múltiples ocasiones durante el siglo XIX. La ley 71 de 1878, en su artículo 6, decretó que la institución pasaría a llamarse Colegio Central de la Universidad, lo cual trajo cambios en la dirección, pues los liberales quedaron al frente del centro de formación como resultado de la guerra del 76. Estos líderes se encargaron de desvincular del claustro las ideas y proyectos impulsados por Berrío. Uno de los cambios fue el nombre del lugar, que deja de ser Universidad de Antioquia para pasar a ser Colegio Central de la Universidad. Con los cambios realizados por los liberales se abolieron también las cátedras de religión y las prácticas que se mantenían como culto católico; sin embargo, se conservaron la Escuela de Artes y Oficios, la Escuela de Jurisprudencia y la Escuela de Medicina. Así mismo, quienes se encargaron de la enseñanza fueron profesores de corte liberal que abogaban por la formación de ciudadanos libres."
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1878" },
+                    "end_date": { "year": "1881" },
+                    "text": {
+                        "headline": "Rafael Campuzano",
+                        "text": "Este doctor en medicina nació en 1822 en Rionegro. Realizó sus estudios universitarios en la capital. Posteriormente regresó a Antioquia para ejercer su profesión, vinculándose con la educación en los municipios de San Roque y Jericó. Se destacó por su ejercicio principalmente como político y acompañante de las fuerzas militares –en calidad de médico– de Tomas Herrán y Pascual Bravo, además como lo describe Julio César García en su texto de biografías, Campuzano servía profesionalmente tanto a conservadores como liberales, siendo partidario político de este último. A Rafael Campuzano le correspondió dirigir la Institución durante la reapertura del Colegio Central (ya que había permanecido cerrada por la guerra). Sin embargo, la desconfianza de los padres de los alumnos matriculados en la Universidad generó controversias y dificultades a la hora de guiarla, puesto que la enseñanza ya no estaba basada en los preceptos católicos y el claustro estaba volviendo a las ideas de Betham. En 1881 se retiró Campuzano de la rectoría pasando a ocupar una curul como legislador. Un año después se dedicó a la presidencia de la Academia de Medicina. Rafael Campuzano falleció tiempo después, en mayo de 1891, siendo recordado como un médico de grandes aportes a la vida política del país."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/rafael-campuzano.jpg",
+                        "caption": "Foto oficial del rector Rafael Campuzano"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1881" },
+                    "end_date": { "year": "1882" },
+                    "text": {
+                        "headline": "Fidel Cano Gutiérrez",
+                        "text": "Este periodista y educador nació en San Pedro de los MIlagros (Antioquia) en 1854. Su educación transcurrió al lado de personajes reconocidos como el institutor Rodolfo Cano, y luego junto al profesor Juan José Molina, con quien comenzó a sentir inclinaciòn por la literatura, e incluso realizó algunos escritos poéticos para un periódico estudiantil. En 1879 se radicó en Medellín donde ocupò cargos como educador, redactor de revistas, secretario de hacienda y director del periódico “La Idea”, entre otros. Por otro lado, para esta época el Colegio Central pasaba por un momento difícil de luchas a nivel local debido al manejo que se le había dado a Antioquia desde años atràs en manos de los mismos mandatarios. Ello causó una división en la Institución provocando un mal momento para el claustro educativo. Es por este momento donde Fidel Cano asume la rectoría, siendo testigo de la época en que acaece la “revolución encabezada por Gaitán y Jorge Isaac contra el gobierno de Pedro Restrepo Uribe. Durante su rectorado, y debido a la situación de conflicto que se vivía, la Junta Suprema se vio en la obligación de clausurar la Universidad, sumado a la aparición de un brote de viruela en la población. Además de ejercer también como diputado en la Asamblea Departamental de Antioquia y senador de la República, gran parte de su vida la dedicó al ejercicio periodístico, trabajando en periódicos como La Unión, La Correspondencia y El Trabajo. Cano fue también el fundador de El Espectador, uno de los periódicos más importantes del país, aún vigente. Durante su actividad, Fidel Cano se encargó de demandar asuntos relacionados con los derechos de los hombres, hasta su fallecimiento el 15 de enero de 1919 en Medellín."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/fidel-cano.jpg",
+                        "caption": "Foto oficial del rector Fidel Cano Gutiérrez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1882" },
+                    "end_date": { "year": "1884" },
+                    "text": {
+                        "headline": "Alvaro Restrepo Eusse",
+                        "text": "Álvaro Restrepo Eusse nació en Yarumal (Antioquia) en enero de 1844. Estudió jurisprudencia en el Colegio del Estado y posteriormente se trasladó a Bogotá para finalizar su educación académica. Al terminar sus estudios ejerció como abogado en varios lugares, entre ellos Medellín y Manizales; además ocupó varios cargos en Antioquia como alcalde, diputado y senador. Otro de los aspectos relevantes de su vida profesional fue su papel como redactor en la prensa, publicando para varios periódicos como El Heraldo, El Guardián, y La Consigna, entre otros. Estuvo presente en la Universidad después del mal momento por el que pasó la misma algunos años atrás con las disputas entre liberales y conservadores. Durante su periodo rectoral hubo calma política y las matrículas aumentaron a pesar de que muchos de los padres enviaron a sus hijos al seminario por temor a las enseñanzas laicas impartidas en la Alma Máter. Sumado a esto, Restrepo Eusse no fue participe de los dogmas católicos y esto se evidenció en asuntos como negar la existencia de Dios, no permitir la clase de religión, entre otros aspectos que apuntaban a “declarar ser cualquier cosa, menos espiritualista y cristiano”. Por otro lado fomentó una educación práctica en el lugar, otorgando locales y materiales, e incluso intentó establecer la Escuela de Minería. Debido a estas posiciones fue mucho más claro lo que se pensaba acerca del plantel y su manejo para dicha época. Restrepo falleció en Medellín el 3 de octubre de 1910."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/alvaro-restrepo-eusse.jpg",
+                        "caption": "Foto oficial del rector Alvaro Restrepo Eusse"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1884" },
+                    
+                    "text": {
+                        "headline": "Federico Alejandro Uribe Uribe",
+                        "text": "Federico Uribe nació en Rionegro el 9 de Julio de 1838. Asumió el cargo de rector por un corto período en 1884. Fue su padre quien comenzó de forma organizada la labor de la enseñanza en Rionegro, lo que conllevó a que la niñez de Uribe transcurriera en medio de actividades educativas. Cursó estudios en el Colegio del Estado sin llegar a recibir el título de doctor. Posteriormente ejerció varios cargos en relación con lo militar y político: general del ejército, secretario del presidente del estado del Cauca y diputado de Antioquia. Dedicó los últimos años de su vida a escribir sobre personajes ilustres de Antioquia, obra que cedió a la Academia Nacional de Historia y de la que actualmente se desconoce su paradero. Murió el 27 de octubre de 1911 en Tuluá (Valle del Cauca)."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/federico-alejandro-uribe.jpg",
+                        "caption": "Foto oficial del rector Federico Alejandro Uribe Uribe"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1884" },
+                    
+                    "text": {
+                        "headline": "Eduardo Antonio Hoyos",
+                        "text": "Eduardo Hoyos nació en 1847 en Manizales. Comenzó sus estudios en Medellín, pero en 1871 se trasladó a Bogotá para terminarlos y graduarse como doctor en jurisprudencia en el Colegio Mayor de Nuestra Señora del Rosario. Ejerció varios cargos importantes, uno de ellos, fue el nombramiento que recibió como catedrático en la Universidad relacionándose así con este ámbito educativo, además de haber sido propuesto para el discurso de clausura de las clases. Durante su período como rector del Colegio Central (1884) también impartió las cátedras de historia y derecho. Posteriormente regresó a Manizales, donde fungió como secretario. Allí murió el 3 de octubre de 1913."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/eduardo-antonio-hoyos.jpg",
+                        "caption": "Foto oficial del rector Eduardo Antonio Hoyos"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1885" },
+                    
+                    "text": {
+                       
+                        "text": "Se acercaba el siglo XX y con esto se consolidó definitivamente el nombre que actualmente lleva la Institución: Universidad de Antioquia En medio de las guerras dadas entre los diferentes partidos políticos, principalmente después de la primera mitad del siglo XIX, para 1885 resurgieron algunas disputas que trajeron consigo cambios políticos, como la reforma a la Constitución Federal por el centralismo. En el campo educativo también se dieron transformaciones importantes que resultaron en la centralización de la capital, y a su vez quedó en manos de la iglesia católica. De esta forma la reapertura de la Alma Máter tuvo un momento difícil, teniendo en cuenta que en algunas ocasiones el lugar fue base militar y su infraestructura se encontraba en malas condiciones. Sin embargo, esto no evitó que la dirección de la institución fuera entregada a los jesuitas, quienes también se encargaron de abrir nuevos lugares, entre ellos el Colegio San Ignacio. Con todo el asunto del mando religioso en lo académico, la Universidad sufrió también múltiples cambios, a la vez que le fueron expropiados los claustros y algunos instrumentos musicales. También fue cerrada la Escuela de Artes y Oficios en el mandato del gobernador Marceliano Vélez. Lo que se buscaba con todo esto era volver a una “moralidad” más centrada bajo la religión. Por otro lado, también se hicieron cambios desde lo académico con un nuevo plan de estudios, en donde se habló de la estructura física, las facultades y política: • Solo tres facultades: Filosofía y Letras, Jurisprudencia y Ciencias Políticas, y Medicina y Cirugía. • Compleja estructura administrativa. • Uniformes. • Control disciplinario."
+                    }
+
+                    
+                },
+
+                {
+                    "start_date": { "year": "1890" },
+                   
+                    "text": {
+                        "headline": "Marceliano Vélez",
+                        "text": "Marceliano Vélez nació en Envigado el 18 de junio de 1832. A los 12 años viaja a Santa Marta, donde conoció algunos personajes que posiblemente influyeron en su pensamiento político, entre ellos su profesor Manuel Murillo Toro, quien más tarde sería presidente de la república. Ocho años después de haber terminado sus estudios en jurisprudencia, volvió a Medellín donde completó su formación en 1853 en la Universidad de Antioquia, convirtiéndose en el primer egresado de la Institución. Vélez tuvo una participación muy amplia en el ámbito político, debido quizá al acercamiento que ya había tenido en su formación académica. Tal participación se dio primeramente en 1854, en contra de la dictadura del presidente José María Melo. En medio de las guerras civiles que asolaron el país durante todo el siglo XIX, Vélez ocupó el cargo de gobernador de Antioquia em cinco oportunidades, cargo relevante tanto para él como para los habitantes antioqueños, pues defendía los intereses conservadores. En cuanto a su periodo como rector de la Universidad, fue nombrado en 1890 ejerciendo el cargo durante un año, periodo que se cumple por las elecciones presidenciales de la época, donde tuvo alta participación junto con Rafael Núñez. Vélez también fungió como abogado, senador de Antioquia y docente en la Escuela Normal Superior de Varones de Medellín. Murió en Medellín en 1923."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/marceliano-velez.jpg",
+                        "caption": "Foto oficial del rector Marceliano Vélez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1891" },
+                    
+                    "text": {
+                        "headline": "Tomás Bernal Mejía",
+                        "text": "Tomás Bernal nació en 1852 en el municipio de La Ceja, Antioquia. Estudió allí mismo bajo una formación inculcada con valores basados en preceptos religiosos. Además, después de haber realizado su primera formación, logró graduarse como doctor en medicina en 1875. Ya en sus responsabilidades laborales cabe destacar principalmente dos con respecto a la Universidad de Antioquia. Por un lado, se dedicó a dictar por largo tiempo la cátedra de anatomía, y en 1851 fue designado vicerrector tras la muerte del profesor Marco Antonio Ochoa. No obstante, en octubre de ese mismo año fue nombrado como rector debido al buen cumplimiento de sus labores, cargo que ocupó durante un año, para ser nuevamente elegido entre 1902 y 1904. Luego de su permanencia en el claustro universitario continuó en asuntos de índole académico, esencialmente en la docencia, donde fue considerado por muchos como apto y entregado a dicha labor hasta su muerte en diciembre de 1917."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/tomas-bernal.jpg",
+                        "caption": "Foto oficial del rector Tomás Bernal Mejía"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1892" },
+                    "end_date": { "year": "1896" },
+                    "text": {
+                        "headline": "Luciano Carvalho",
+                        "text": "Originario de Sopetrán (Antioquia), Carvalho recibió su educación al lado de unos parientes que se hicieron cargo de él dado que era huérfano. Posteriormente le ayudo el sacerdote Benito Jaramillo García, quien se encargó de obtener una beca para que pudiera continuar sus estudios en un colegio particular, el cual se encontraba a cargo de Mariano Ospina. Allí se comenzó a tejer una relación de protectorado del señor Ospina a Carvalho; incluso cuando el primero es elegido presidente de Colombia, no prescindió de su “discípulo”, puesto que lo llevó a Bogotá para trabajar en conjunto sin dejar de lado sus intereses académicos. Posteriormente, con los disturbios dados en 1860, tuvo varias disputas como alférez, precisamente por la defensa que otorgó a su amigo el doctor Ospina. Además se vio en la obligación de retirarse a Venezuela debido a los mismos altercados. Una vez allí comenzó a ejercer la enseñanza académica, en la ciudad de San Cristóbal. A su regreso a Medellín en 1864, empezó a ejercer en lugares como el seminario y las escuelas normales, dictando materias como álgebra, filosofía y religión. No obstante, mantuvo una postura más de cara a la filosofía, puesto que fue en esta materia que se destacó como profesor en la Universidad de Antioquia, lo que le valió el nombramiento como rector entre 1892 y 1896. Tras su paso como rector de la Alma Máter, ejerció como notario y diputado a la Asamblea de Antioquia, hasta su muerte el 29 de enero de 1928."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/luciano-carvalho.jpg",
+                        "caption": "Foto oficial del rector Luciano Carvalho"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1896" },
+                    "end_date": { "year": "1899" },
+                    "text": {
+                        "headline": "Eduardo Zuleta Gaviria",
+                        "text": "Eduardo Zuleta nació en 1860 en Remedios (Antioquia). A los 10 años se trasladó a Medellín donde cursó algunos estudios, y posteriormente se graduó como médico en Bogotá. Más tarde se trasladó a Estados Unidos para seguir con su actividad académica. De regreso a Medellín ejerció en la Universidad de Antioquia dictando algunas cátedras, y en 1892 fue nombrado rector de la Escuela Nacional de Minas donde desempeñó un buen papel. Según el autor César García, dicho lugar se encontraba en condiciones “deplorables” y fue Zuleta quien ayudó al buen funcionamiento de esa institución. Su designación como rector de la Universidad de Antioquia se dio en 1896 y coincidió con una gran acogida a los estudiantes de la Escuela de Minas, que había sido cerrada un año antes. Durante su cargo como rector implementó una serie de cambios tanto en la infraestructura como en la planta docente, trayendo al plantel profesores más preparados en cada una de sus especialidades. También se encargó de la adecuación de los laboratorios con el fin de ofrecer estudios más prácticos en la Facultad de Medicina. Se retiró de la Universidad para encargarse de asuntos diplomáticos en España. Dentro de sus actividades posteriores también formó parte de la Academia de Historia (desde 1903). Fue diputado a la Asamblea Departamental de Antioquia, primer director de la Escuela de Veterinaria de Medellín y perteneció a algunas instituciones literarias. Zuleta murió en Bogotá el 12 de agosto de 1937."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/eduardo-zuleta.jpg",
+                        "caption": "Foto oficial del rector Eduardo Zuleta Gaviria"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1899" },
+                   
+                    "text": {
+                        "headline": "Tomás Herrán",
+                        "text": "Nació en 1843 en Bogotá, bajo el cuidado de sus padres Ana Mosquera y el presidente de la Nueva Granada, Pedro Alcántara Herrán. En 1847 se trasladó con su padre a Nueva York, donde cursó sus estudios que luego terminó en la Universidad de Georgetown como Doctor en Filosofía y Letras. De esta forma continuó su labor académica hasta 1899, cuando se graduó con el título de Doctor en Derecho. Trabajó en Medellín, especialmente en el orden que propuso para la Escuela de Artes y Oficios, y fue vicerrector y profesor en la Universidad de Antioquia. En 1893 fue nombrado Secretario de Instrucción Pública, desde donde se encargó de realizar importantes innovaciones en el campo académico tales como el establecimiento de las escuelas nocturnas, además de otorgar una ayuda anual de $500 a la Academia de Medicina. Otro de sus aportes relevantes fue la implementación de la enseñanza de telegrafía en la Escuela Normal de Señoritas. Debido a su cargo público nombró como rector de la Universidad de Antioquia a Eduardo Zuleta (su antecesor en este cargo). Posteriormente se le nombró rector de la Alma Máter en 1899, pero el mismo año se desató una guerra civil, lo que generó la suspensión de las actividades en el plantel. Uno de los aspectos más relevantes en su carrera fue su participación en la separación de Panamá. El 22 de enero de 1903 se firmó entre Herrán y un funcionario norteamericano, la autorización que otorgó territorio de Panamá a Estados Unidos para explotarlo, ofreciendo a cambio una suma de dinero a Colombia. Dicha negociación fue objeto de oposición del senado colombiano trayendo consigo disputas por la negación del tratado. Herrán murió el 30 de agosto de 1904 en Nueva York."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xix/tomas-herran.jpg",
+                        "caption": "Foto oficial del rector Tomás Herrán"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1901" },
+                    
+                    "text": {
+                        "headline": "Carlos Eugenio Restrepo Restrepo",
+                        "text": "Rector de la Universidad de AntioquiaCarlos E. Restrepo nació en Medellín en 1867. Al inicio de sus estudios tuvo por compañeros a dos personajes que serian importantes en su futuro: Antonio José Uribe y Mariano Ospina. Posteriormente terminó sus estudios en el seminario diocesano, donde además de su formación académica también fue construyendo su ideal político. Más tarde trabajó en el bufete de su padre donde obtuvo prestigio por sus labores. Tiempo después se dedicó al trabajo periodístico en diarios como El Impulsor y La Unión, y en 1899 pasó a dirigir el periódico El Correo de Antioquia, medio de información de corte conservador, al cual apuntaba Restrepo. Al reabrirse la Universidad en 1901, Restrepo fue nombrado al frente de la rectoría. Incluso cuando recibió el nombramiento entregó al consejo y profesores el texto mediante el cual dio a conocer sus posturas respecto a la forma de manejar tanto el plantel como el aspecto académico. Tras su retiro del cargo realizó otras actividades, destacándose como miembro de la Academia Antioqueña de Historia. Carlos Eugenio Restrepo fue nombrado presidente de la república entre 1910 y 1914. De esta forma, entre muchos otros movimientos políticos, intelectuales y sociales en los que participó, puede decirse que la figura de Carlos E. Restrepo es importante para la ciudad, y tanto más para la Universidad de Antioquia. Luego de su muerte el 6 de julio de 1937, su familia donó al claustro universitario parte de su obra escrita."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/carlos-eugenio-restrepo.jpg",
+                        "caption": "Foto oficial del rector Carlos Eugenio Restrepo Restrepo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1902" },
+                    "end_date": { "year": "1904" },
+                    "text": {
+                        "headline": "Tomás J. Bernal",
+                        "text": "Tomás Bernal nació en el municipio de La Ceja (Antioquia) en 1852. Su primera formación académica comenzó en Marinilla, y posteriormente continuó sus estudios en la Universidad de Antioquia donde obtuvo el título en Medicina. Al finalizar su carrera se dedicó a complementar sus estudios en París, donde se destacó, e incluso ganó concursos de anatomía. Al regresar a Colombia, ejerció en Medellín como profesor de anatomía, ciencias naturales, botánica y zoología. Durante su periodo rectoral la Alma Máter atravesó una crisis financiera importante que llevó a que algunos profesores se ofrecieran a dictar sus cursos gratis. Bernal se encargó de la rectoría de la Institución durante dos años, hasta 1904 cuando fue reemplazado por el señor Tulio Ospina Vásquez."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Tomás J. Bernal"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1904" },
+                    "end_date": { "year": "1911" },
+                    "text": {
+                        "headline": "Tulio Ospina Vásquez",
+                        "text": "Este ingeniero, historiador y científico nació en Medellín en 1857. Hijo de Mariano Ospina Rodríguez, presidente de la Confederación Granadina entre 1857 y 1861. Desde muy pequeño fue llevado a Guatemala, debido a que tuvo que salir del país junto con su familia tras la caída del gobierno liderado por su padre. Estando allí fue educado por religiosos de la Compañía de Jesús. Regresó a Medellín en 1882 y en la capital antioqueña continuó sus estudios en la Universidad de Antioquia. Tiempo después se vinculó al ejército del Partido Conservador como capitán de batallón durante la Guerra Civil de 1885. Otra de las actividades a las que se dedicó fue al estudio de la ingeniería de minas en la Universidad de Berkeley, en Costa Rica. A su regreso a Medellín, tanto Tulio como su hermano Pedro Nel formaron parte de la rectoría de la Escuela Nacional de Minas de Medellín, siendo los primeros rectores de esa institución. Ya en 1904, Ospina se posesionó como rector de la Universidad de Antioquia, gracias al llamado hecho por el gobernador Benito Uribe Gómez. Debido a la precaria situación económica de la Universidad, Ospina solicitó la impartición de clases gratuitas. Esta situación causó el cierre de algunas facultades y de las asignaturas de medicina, latín y filosofía, puesto que se pensó en la necesidad de implementar carreras más prácticas como la ingeniería, incluso proyectando las materias que se debían cursar en las diferentes escuelas de agronomía, minas y comercio. Otra modificación sufrida en la Universidad fue la implementación de la Escuela de Bachillerato Técnico. Ospina dejó de lado “las dos secciones de enseñanza secundaria” de la Institución: la Escuela de Filosofía y Letras y el Liceo Antioqueño, creado en 1901. No obstante en 1908, siendo aún Ospina rector, el liceo fue reabierto. En cuanto a la Escuela de Minas, de la cual Ospina fue cofundador, rector y profesor, ésta fue reincorporada como anexa a la Universidad de Antioquia entre 1906 y 1911, cuando Ospina se retira de la Universidad, y la Escuela pasa a ser de nuevo una entidad independiente. Ospina murió en Panamá, el 17 de febrero de 1921."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Tulio Ospina Vásquez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1911" },
+                    "end_date": { "year": "1913" },
+                    "text": {
+                        "headline": "José María Escobar",
+                        "text": "José María Escobar nació en Medellín en 1855. Este personaje estuvo al frente de la Universidad de Antioquia durante dos años, durante su periodo se creó la revista Estudios de Derecho. Además, Escobar ocupó algunos cargos en la esfera pública que le dieron reconocimiento político al ser miembro del concejo municipal, rector de la Escuela Nacional de Minas, secretario departamental de hacienda y catedrático universitario en la Escuela de Minas y la Universidad de Antioquia. Luego de terminado su periodo rectoral fue reemplazado por Miguel María Calle."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/jose-maria-escobar.jpg",
+                        "caption": "Foto oficial del rector José María Escobar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1913" },
+                    "end_date": { "year": "1921" },
+                    "text": {
+                        "headline": "Miguel María Calle",
+                        "text": "Miguel María Calle nació en 1877 en Abejorral (Antioquia). Sus primeros estudios los realizó en su pueblo natal, aunque tiempo después se trasladó hasta Manizales donde terminó algunos cursos en el Colegio Santo Tomas de Aquino. En 1892 ingresó a la Universidad de Antioquia para estudiar Literatura, y en 1895 obtuvo su título en Filosofía y Letras. Un año después, comenzó sus estudios en Ciencias Naturales y Medicina. Ejerció laboralmente en diferentes lugares del departamento, como por ejemplo una empresa minera en el municipio de Titiribí, donde se encargó del servicio médico. Uno de los campos en donde más se destacó fue su faceta como docente, pues trabajó por largo tiempo como profesor de la Facultad de Medicina, e incluso, ya como rector, pensó que era necesario contar con un edificio adecuado para brindar una educación óptima, escogiendo entonces el que había sido construido para la Escuela Normal. Esta idea derivó en que en 1913 se iniciara la reforma al edificio junto con el salón de grados, ubicado actualmente en el Paraninfo. No obstante, la estructura material no solo fue el centro de los cambios realizados por Calle, también hubo dos importantes innovaciones: algunos estatutos que presentaban incongruencia fueron modificadas, y por otro lado, la separación de las facultades de Derecho y Medicina, para que éstas empezaran a funcionar independientemente de la Universidad. En 1919 renunció al cargo de rector, pero Jesús Antonio Hoyos, su sucesor, no se presentó, y Calle fue llamado a continuar al frente de la rectoría hasta su retiro en 1921. Murió en Medellín en 1957."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/miguel-maria-calle.jpg",
+                        "caption": "Foto oficial del rector Miguel María Calle"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1921" },
+                    
+                    "text": {
+                        "headline": "Emilio Robledo",
+                        "text": "Nació en 1875 en Salamina, Caldas, donde también cursó sus estudios. Más tarde viajó a Manizales y en 1893 llegó a la Universidad de Antioquia donde su hermano fungía como secretario. Cursó su educación superior en la Facultad de Medicina donde se graduó en 1900, aunque desde 1895 se desempeñaba como tesorero y profesor en la Universidad. Durante su rectoría implementó las cátedras de deontología médica e historia de la medicina en dicha facultad. Se retiró del cargo en abril de 1922, y en 1925 fue reelegido rector. Murió en Bogotá en 1961."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/emilio-robledo.jpg",
+                        "caption": "Foto oficial del rector Emilio Robledo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1922" },
+                    "end_date": { "year": "1923" },
+                    "text": {
+                        "headline": "Antonio Mauro Giraldo",
+                        "text": "Antonio Giraldo nació en1862 en El Peñol (Antioquia). Sus primeros estudios los realizó en el mismo lugar, no obstante se trasladó a Medellín para continuar en el Colegio Central de la Universidad, donde posteriormente realizó estudios en Medicina. Por otro lado. en 1885 participó en la guerra bajo las fuerzas conservadoras. Más tarde continuó con su formación académica en el Colegio Mayor de Nuestra Señora del Rosario y en la Escuela Nacional de Medicina, de donde se graduó en 1892. Ejerció algunas labores como catedrático en Rionegro y Medellín, representante al Congreso y diputado a la Asamblea Departamental de Antioquia. Fue el primer médico en Antioquia en realizar trepanación de cráneo sin anestesia. Durante su periodo rectoral se creó el Hospital San Juan de Dios, una policlínica que dependía científica y administrativamente de la Escuela de Medicina y del Hospital San Vicente de Paúl. Estuvo al frente de la Institución hasta 1923, año en el que asumió el cargo por segunda vez Emilio Robledo. Murió en 1958."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/antonio-mauro-giraldo.jpg",
+                        "caption": "Foto oficial del rector Antonio Mauro Giraldo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1925" },
+                    "end_date": { "year": "1928" },
+                    "text": {
+                        "headline": "Emilio Robledo",
+                        "text": "Robledo asumió como rector por primera vez entre 1921 y 1922. Fue reelegido en este cargo para el período 1925-1928. Durante su segundo periodo rectoral se inaugura el edificio de la antigua sede de la Facultad de Derecho, que actualmente sigue funcionando como edificio anexo a la Alma Máter en el centro de la ciudad de Medellín."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/emilio-robledo.jpg",
+                        "caption": "Foto oficial del rector Emilio Robledo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1928" },
+                    "end_date": { "year": "1934" },
+                    "text": {
+                        "headline": "Pbro. Manuel José Sierra",
+                        "text": "Nació en Girardota en 1885, y allí cursó sus primeros estudios. En 1899 ingresó al seminario de Medellín de donde se ordenó sacerdote en 1903. Su actividad está ligada principalmente a la creación y participación como primer rector de la Universidad Pontificia Bolivariana. Asumió la rectoría de la Universidad de Antioquia en 1928, donde realizó reformas a la biblioteca, hecho que causó grandes pérdidas en el material almacenado en esta dependencia. Durante su rectoría se presentó una protesta por parte de los estudiantes de la Facultad de Derecho en contra de sus preceptos. Por iniciativa del Carlos Cock, gobernador del departamento, y del rector Sierra, se creó la Escuela Dental, que más adelante se convirtió en la Facultad de Odontología. Durante su rectoría la Universidad de Antioquia recibió por primera vez en mujeres eb sus aulas. En 1931 cuatro damas se matricularon en la Escuela Dental. Además, es necesario resaltar que de cierta forma la creación de este claustro católico tiene relación con la Universidad de Antioquia, puesto que como lo menciona Gildardo Lotero Orozco “los fundadores de la UPB simbolizaron su dimisión de la Universidad de Antioquia y la creación de una universidad distinta donde pudieran vivir su fe católica y practicar su moral sin intolerancias ni exclusivismos”. El presbítero Manuel J. Sierra murió en Medellín en 1941."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/manuel-jose-sierra.jpg",
+                        "caption": "Foto oficial del rector Pbro. Manuel José Sierra"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1934" },
+                    "end_date": { "year": "1938" },
+                    "text": {
+                        "headline": "Clodomiro Ramírez",
+                        "text": "Clodomiro Ramírez nació en Abejorral en 1869, y cursó estudios en derecho y ciencias políticas. Posteriormente ejerció en importantes y numerosos campos, tanto académicos como políticos, en los que sobresalen: profesor de la Universidad de Antioquia, gobernador de Antioquia en dos oportunidades (1903-1904 y 1912-1913), miembro de las academias de Ciencias Políticas de París y de Derecho Internacional de Estados Unidos, así como de la Academia de Historia Antioqueña. Durante su gestión como rector de la Universidad de Antioquia impulsó la extensión universitaria y el fortalecimiento académico de la Institución. Para mejorar la situación financiera de la Alma Máter, el rector Ramírez creó el Fondo Acumulativo Universitario, que contó con el apoyo de diferentes entidades públicas y privadas. Por otro lado, en el ámbito político estableció relación con el señor Carlos E. Restrepo cuando éste estuvo en la presidencia y el primero como ministro de gobierno. Además fue juez en Abejorral, secretario de hacienda, diputado y senador de la república. Estuvo a la cabeza de la Universidad de Antioquia durante un periodo de cuatro años, retirándose del cargo en 1938. Falleció dos años después, el 17 de septiembre de 1940."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/clodomiro-ramirez.jpg",
+                        "caption": "Foto oficial del rector Clodomiro Ramírez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1938" },
+                    "end_date": { "year": "1942" },
+                    "text": {
+                        "headline": "Ricardo Uribe Escobar",
+                        "text": "Ricardo Uribe Escobar nació en Medellín en 1892. Realizó sus estudios en el Colegio de San Ignacio donde se graduó de bachiller en Filosofía y Letras. Posteriormente continúo su carrera en el campo del derecho, logrando su título de doctor en Derecho de la Universidad de Antioquia. Fue uno de los primeros hombres que desde la academia local trató el tema de los derechos de la mujer ante la ley en su tesis para optar a grado de Doctor en Jurisprudencia y Ciencias Políticas, titulada 'Notas Feministas'. Más tarde se vinculó a la Universidad de Antioquia como docente en la Facultad de Derecho y Ciencias Políticas. Otros cargos relevantes que ocupó fueron: presidente del consejo de estado, cofundador de la Universidad de Medellín en 1950, fundador del diario El Correo Liberal, secretario de gobierno, y designado a la presidencia de la república. Murió en Medellín en 1968."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/ricardo-uribe-escobar.jpg",
+                        "caption": "Foto oficial del rector Ricardo Uribe Escobar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1942" },
+                    
+                    "text": {
+                        "headline": "Julio César García",
+                        "text": "Julio César García, nació en Bogotá en 1894. Se graduó como bachiller en el Colegio Mayor de Nuestra Señora del Rosario en Bogotá, con el título en Filosofía y Letras. Posteriormente se dedicó principalmente a la docencia, ejerciendo en diferentes lugares como la Escuela Normal de Varones y el Liceo Antioqueño, del que también fue rector en 1940. En 1943 fue elegido para ocupar el cargo de rector de la Universidad de Antioquia. Desde siempre se había interesado por los museos, y al asumir el cargo promovió estudios arqueológicos y antropológicos con la intención de crear el museo arqueológico de la Universidad. Además de ello, también estuvo al frente de otros cargos como diputado a la asamblea de Antioquia y fundó el periódico conservador La Defensa. Murió en Medellín en 1959."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/julio-cesar-garcia.jpg",
+                        "caption": "Foto oficial del rector Julio César García"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1943" },
+                 
+                    "text": {
+                        "headline": "Fidel Rodríguez",
+                        "text": "Fidel Rodríguez nació en 1909. Realizó sus estudios en el Liceo de la Universidad de Antioquia. Posteriormente, se dedicó al derecho en la Alma Máter, especializándose en derecho civil y comercial. Igualmente ejerció como profesor en la Facultad de Derecho y como rector de la Universidad en 1943. Su rectoría marcó el inicio de la Escuela de Ciencias químicas que dio origen a la Facultad de Ingeniería. También fueron establecidas la Escuela de Farmacia y el Instituto de Filología."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Fidel Rodríguez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1944" },
+                    "end_date": { "year": "1946" },
+                    "text": {
+                        "headline": "Hernán Posada González",
+                        "text": "Hernán Posada González nació en 1901. Este médico además de ser decano de la Facultad de Medicina, también asumió la rectoría de la Universidad de Antioquia. Durante su periodo rectoral, Posada se destacó principalmente por crear el Departamento de Extensión Cultural, dependencia que hasta la fecha es la encargada de las actividades y promoción cultural de la Universidad."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/hernan-posada.jpg",
+                        "caption": "Foto oficial del rector Hernán Posada González"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1946" },
+                    "end_date": { "year": "1948" },
+                    "text": {
+                        "headline": "Gil J. Gil Madrigal",
+                        "text": "Gil Juvenal Gil nació en Yarumal en 1884. Estudió bachillerato en la Universidad de Antioquia, de donde se graduó en Filosofía y Letras. Estudio medicina en la misma institución, pero debido al cierre de la Universidad entre 1905 y 1910 continuó con sus estudios en la Universidad de Columbia, donde se graduó como médico en 1907. Tras terminar su carrera regresó a Medellín donde trabajó como profesor y decano de la Facultad de Medicina. Fue también jefe de clínica y rector de la Universidad entre 1947 y 1948. Fue también miembro de diversas academias de medicina y presidente de la Sociedad de Mejoras Públicas de Medellín. Considerado como maestro de la cirugía antioqueña, realizó más de diez mil intervenciones quirúrgicas con porcentaje mínimo de mortalidad. En 1919 fundó en Medellín la primera clínica particular de Antioquia. Murió en Medellín en 1948."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Gil J. Gil Madrigal"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1948" },
+                    "end_date": { "year": "1953" },
+                    "text": {
+                        "headline": "Gustavo Uribe Escobar",
+                        "text": "Nació en Medellín en 1888. Realizó sus estudios en el colegio San Ignacio y posteriormente en la Universidad de Antioquia donde cursó medicina. Más tarde viajó a Barcelona donde culminó su educación superior. Fue profesor en la Facultad de Medicina donde dictaba clases dermatología y anatomía patológica. Asumió el cargo de rector entre 1948 y 1953, no obstante existe muy poca información sobre su administración. Durante su periodo rectoral se establece el examen de admisión como requisito indispensable para ingresar a la Universidad de Antioquia. Otras labores a las que se dedicó Escobar fueron: jefe del laboratorio departamental, secretario de la delegación de Colombia en Bélgica, presidente de la Academia de Medicina de Medellín y colaborador de la Cruz Roja. Murió en 1972."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/gustavo-uribe-escobar.jpg",
+                        "caption": "Foto oficial del rector Gustavo Uribe Escobar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1953" },
+                    "end_date": { "year": "1955" },
+                    "text": {
+                        "headline": "Alberto Bernal Nicholls",
+                        "text": "Alberto Bernal Nicholls nació en Medellín en 1900. Sus estudios iniciales los realizó en el Colegio San Ignacio y más tarde estudió medicina en la Universidad de Antioquia, institución de la que posteriormente fue rector. Durante su periodo rectoral el gobierno departamental creó el Bachillerato Nocturno de la Universidad de Antioquia y la Biblioteca General de la Alma Máter, considerada como la segunda mejor del país, después de la Biblioteca Nacional. Entre algunos de los cargos ejercidos por Bernal se destacan su participación en la junta directiva del Hospital San Vicente de Paul, fue miembro de la Academia de Medicina de Medellín así como de la Academia Colombiana de Medicina. Se retiró del cargo en 1955 y falleció en Medellín en 1982."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/alberto-bernal.jpg",
+                        "caption": "Foto oficial del rector Alberto Bernal Nicholls"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1955" },
+                    "end_date": { "year": "1957" },
+                    "text": {
+                        "headline": "Samuel Barrientos Restrepo",
+                        "text": "Nació en Fredonia (Antioquia) en 1908. Realizó sus estudios en el Colegio Mayor de Nuestra Señora del Rosario, los cuales culminó en 1927 cuando se graduó como abogado. Su periodo rectoral en la Universidad de Antioquia se destacó principalmente por la creación de un nuevo edificio para el Liceo Antioqueño ubicado en el barrio Robledo. Además, junto con Ignacio Vélez Escobar, fundó la Escuela Interamericana de Bibliotecología. Fue Secretario de Educación, diputado a la Asamblea de Antioquia, magistrado de la Sala Penal del Tribunal Superior de Medellín y fundador del Liceo Marco Fidel Suárez. Murió en Medellín en 1980."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/samuel-barrientos-restrepo.jpg",
+                        "caption": "Foto oficial del rector Samuel Barrientos Restrepo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1958" },
+                    
+                    "text": {
+                        "headline": "Gonzalo Restrepo Jaramillo",
+                        "text": "Gonzalo Restrepo Jaramillo nació en Medellín en 1895. Estudió en la Universidad de Antioquia donde obtuvo el título en Derecho y Ciencias Políticas, tras lo cual cursó una especialización en Estados Unidos. A su regreso a Medellín ejerció como profesor en la Alma Máter, en la Escuela Nacional de Minas y en la Escuela de Derecho de la Universidad Pontificia Bolivariana. Durante su periodo rectoral la Escuela Interamericana de Bibliotecología abrió sus puertas a la primera promoción de estudiantes de diferentes países de América Latina, y el Consejo Directivo de la Universidad aprobó los contratos para la construcción de los nuevos edificios y campos deportivos del Liceo Universitario. Fue también concejal, senador, diputado a la Asamblea de Antioquia, gerente del Banco Alemán Antioqueño y embajador de Colombia en Washington. Murió en 1966."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Gonzalo Restrepo Jaramillo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1958" },
+                    
+                    "text": {
+                        "headline": "Alberto Gómez Arango",
+                        "text": "Médico y cirujano nacido en Medellín en 1903. A partir de 1927 se desempeñó como docente de áreas como técnica quirúrgica, higiene y patología general. Fue miembro de la Sociedad Médico Quirúrgica de Hospitales en Bogotá. Fungió también como médico de asistencia pública en Medellín y decano encargado de la Facultad de Medicina. Durante su periodo rectoral se dio inicio al programa de bacteriología. Realizó diversas visitas a principales centros quirúrgicos de New york, Chicago, Madrid y París, entre otros. Murió en 1997."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/alberto-gomez-arango.jpg",
+                        "caption": "Foto oficial del rector Alberto Gómez Arango"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1958" },
+                   
+                    "text": {
+                        "headline": "José Manuel Mora Vásquez",
+                        "text": "José Manuel Mora nació en Medellín en 1896. Sus primeros estudios los hizo en la escuela de las hermanas de la caridad, y los secundarios en el Colegio de los Jesuitas en Medellín. Más tarde se graduó como abogado en la Escuela de Derecho de la Universidad de Antioquia, donde también ejerció profesor y decano. Fue también docente en la Universidad Pontificia Bolivariana y en la Facultad de Minas de la Universidad Nacional. Fiscal superior, Secretario de Hacienda de Antioquia y magistrado del Tribunal Superior fueron otros de los cargos que desempeñó. Asumió como rector entre 1958 y 1959. Murió en Medellín en 1991 a los 95 años."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/jose-manuel-mora-vasquez.jpg",
+                        "caption": "Foto oficial del rector José Manuel Mora Vásquez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1959" },
+                    
+                    "text": {
+                        "headline": "Iván Correa Arango",
+                        "text": "Iván Correa nació en Medellín en 1916, y realizó sus estudios en el Liceo Antioqueño. Sus estudios superiores los realizó también en esta institución, de donde se graduó en Derecho y Economía. Durante su administración la Asamblea Departamental creó la Escuela de Periodismo de la Universidad de Antioquia, la cual funcionó en sus primeros años como una dependencia de la Facultad de Educación. Correa también ejerció como profesor, abogado del Ministerio de Hacienda, secretario general de la Presidencia de la República, presidente del Banco Industrial Colombiano y vicepresidente de la Compañía Colombiana de Tabaco. Cabe anotar que Iván Correa es el rector más joven que ha tenido la Universidad de Antioquia, con tan solo 43 años."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/ivan-correo-arango.jpg",
+                        "caption": "Foto oficial del rector Iván Correa Arango"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1961" },
+                    
+                    "text": {
+                        "headline": "Jaime Sanín Echeverri",
+                        "text": "Jaime Sanín nació en 1922 en Rionegro. Durante su educación inicial pasó por el seminario de los jesuitas, sin embargo no culminó su preparación vocacional como sacerdote. Estudió derecho en la Universidad Pontificia Bolivariana, a pesar de que se dedicó principalmente al periodismo y la literatura. Sanín se destacó como periodista en algunos de los diarios más importantes del país, fue fundador de algunos medios de comunicación y lo hizo famoso la novela titulada 'Una mujer de cuatro en conducta' publicada en 1948 y llevada tiempo después a teatro y televisión. Desde 1953 fue profesor de economía en la Facultad de Ciencias Económicas de la Alma Máter y fue elegido rector de la Universidad de Antioquia en 1961. Durante su periodo rectoral la Asamblea Departamental aprobó la venta del Ferrocarril de Antioquia a la nación, con lo cual se destinaron 25 millones de pesos para la construcción de la Ciudad Universitaria. Este destacado abogado y periodista ocupó diversos cargos públicos de renombre, fue director del SENA, estuvo al frente de la Asociación Colombiana de Universidades y rector de la Universidad Pedagógica de Bogotá. Además perteneció a la Academia Colombiana de la Lengua.Murió en Bogotá en 2008."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/jaime-sanin-echeverri.jpg",
+                        "caption": "Foto oficial del rector Jaime Sanín Echeverri"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1963" },
+                    "end_date": { "year": "1965" },
+                    "text": {
+                        "headline": "Ignacio Vélez Escobar",
+                        "text": "Ignacio Vélez nació en 1918. Estudió medicina y cirugía en la Universidad de Antioquia, y posteriormente en Estados Unidos, donde cursó su especialización. Fue profesor de la Facultad de Medicina de la Alma Máter y al poco tiempo fue elegido como decano. En cuanto a su participación en la vida social y política se destacó como concejal de Medellín, gobernador de Antioquia y senador de la República. En 1963 asumió el cargo de rector de la Universidad de Antioquia hasta 1965. Es relevante mencionar que fue el principal generador de la idea de llevar a cabo la construcción de la Ciudad Universitaria, para ello recibió ayudas económicas de entidades como Kellogg Company y Rockefeller, así como un préstamo por parte del Banco Interamericano de Desarrollo – BID- . Durante su periodo rectoral se implementó una política de modernización de la Universidad que privilegió la departamentalización, el desarrollo de las ciencias básicas y de los estudios generales, el surgimiento de nuevas carreras y la organización de materias por créditos. Otra contribución importante de Escobar fue la creación de la Escuela Nacional de Salud Pública, que inicialmente funcionaría como una dependencia de la Facultad de Medicina. En los últimos años de su vida decidió retirarse de la escena política a la cual pertenecía como uno de los líderes conservadores de Antioquia. Falleció en 2011 en Sabaneta, Antioquia."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/ignacio-velez.jpg",
+                        "caption": "Foto oficial del rector Ignacio Vélez Escobar"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1965" },
+                    "end_date": { "year": "1969" },
+                    "text": {
+                        "headline": "Lucrecio Jaramillo Vélez",
+                        "text": "Lucrecio Jaramillo Vélez nació en Medellín en 1915. Realizó sus estudios en derecho y fue profesor distinguido de la misma facultad. Siendo profesor de la Alma Máter fue elegido como decano de la Facultad de Derecho para el periodo 1964-1965, cargo que le permitió instaurar el Consultorio Jurídico, como un servicio ofrecido por los estudiantes y profesores a la comunidad en general. Para 1965 fue elegido para ocupar el cargo de rector de la Universidad de Antioquia, luego de que el Consejo Superior Universitario aceptara la renuncia del profesor Ignacio Vélez Escobar. Durante su periodo rectoral, Jaramillo debió asumir el periodo final de la construcción del campus principal de la Institución, conocido como Ciudad Universitaria, así como su inauguración en 1969. Como rector asumió las movilizaciones de estudiantes de la Institución y de otros universitarios de la ciudad que protestaban en contra del Plan Básico de la Educación Superior. Jaramillo estuvo al frente de la Universidad de Antioquia hasta 1969, y falleció en 1972."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/lucrecio-jaramillo-velez.jpg",
+                        "caption": "Foto oficial del rector Lucrecio Jaramillo Vélez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1970" },
+                    
+                    "text": {
+                        "headline": "Eduardo Uribe Botero",
+                        "text": "Eduardo Uribe nació en La Ceja, Antioquia, en 1910 y allí mismo realizó sus estudios. Posteriormente se trasladó a Rionegro y culminó su bachillerato en el colegio San Ignacio de Medellín, en 1929. Más tarde estudió derecho en la Universidad de Antioquia. Uribe tuvo una amplia participación política en diferentes campos como secretario de gobierno, representante a la cámara, ministro de gobierno, y embajador de Colombia en Washington, cargo desde el cual, en relación con el Banco Interamericano de Desarrollo, fue posible un empréstito para la construcción de la Ciudad Universitaria. Este abogado estuvo al frente de la Universidad de Antioquia como rector en un periodo fugaz de ocho meses. Uribe Botero falleció en Medellín, el 16 de enero de 1973."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Eduardo Uribe Botero"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1970" },
+                    
+                    "text": {
+                        "headline": "Samuel Bernardo Syro Giraldo",
+                        "text": "Samuel Bernardo Syro nació en Rionegro en 1924. Fue profesor y decano en la Facultad de Ciencias Económicas de la Universidad. Syro ocupó el cargo de rector de la Alma Máter en 1970 y junto con el gobernador Diego Calle y Efraín Vélez, enfrentaron el movimiento estudiantil de 1971. El movimiento estudiantil de la Universidad se fortaleció e hizo sentir su inconformidad con la intervención de las fundaciones norteamericanas en las universidades del país, e igualmente manifestó su rechazo por la guerra de Vietnam. La Asociación de profesores de la Universidad de Antioquia expresó públicamente su respaldo a la causa estudiantil. Este asunto coyuntural dentro de su periodo rectoral derivó en el retiro de Syro Giraldo. Además de ser rector de la Institución, Syro fue senador de la república y alcalde de Medellín."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/samuel-syro-giraldo.jpg",
+                        "caption": "Foto oficial del rector Samuel Bernardo Syro Giraldo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1971" },
+                    
+                    "text": {
+                        "headline": "Hector Guillermo William Rojas Montoya",
+                        "text": "Hijo de Francisco Rojas y Carolina Montoya, William Rojas nació en La Estrella, Antioquia, el 30 de diciembre de 1929. Realizó sus estudios en medicina en la Universidad de Antioquia, de donde se graduó con tesis laureada en 1955. Realizó su especialización en medicina interna en la Universidad de Pensylvania (Estados Unidos) y en el Hospital Hammersmith de Londres. Fue profesor de la Alma Máter en el campo de medicina interna, así coordinador de esta línea en de la Facultad de Medicina. También ejerció como director ejecutivo de la misma facultad. En 1971 tomó el cargo como rector de la Universidad de Antioquia. Sin embargo, su paso por la dirección de la Institución estuvo marcado por un momento coyuntural en la consolidación de una de las manifestaciones más importantes del movimiento estudiantil. Se produjo una asonada en contra del rector William Rojas, quien fue obligado a salir de su oficina. Pocos días después se ordenó la expulsión de los estudiantes responsables, decisión que despertó la solidaridad del estudiantado lo que conllevó a la suspensión de las sanciones. Aún así, las labores académicas fueron suspendidas durante el resto de ese año."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/.jpg",
+                        "caption": "Foto oficial del rector Hector Guillermo William Rojas Montoya"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1972" },
+                    "end_date": { "year": "1974" },
+                    "text": {
+                        "headline": "Luis Fernando Duque Ramírez",
+                        "text": "Luis Fernando Duque nació en Bogotá el 19 de junio de 1939. Cursó la primaria en el colegio de la Universidad Pontificia Bolivariana, la secundaria en el colegio San José y sus estudios universitarios en la Universidad de Antioquia, donde se graduó como médico y cirujano. Fue en la Alma Máter donde comenzó integrando el personal docente en la Escuela de Salud Pública. También se destaca su participación en el Congreso Mundial de Ginecología en New York. En 1972 fue designado por el gobernador para ejercer como rector encargado de la universidad, y ya como rector en propiedad un año después. Durante su administración se reiniciaron los paros profesorales y estudiantiles durante la segunda semana de abril. Las protestas estaban relacionadas con la precaria situación financiera de la Universidad y la poca atención que el gobierno le presta a los reclamos del magisterio oficial. Además, la inconformidad de la comunidad universitaria se manifestó por medio de la creación de una alianza entre el movimiento estudiantil y un grupo de profesores, con el objetivo de enfrentar la política de mano dura del rector Luis Fernando Duque Ramírez. En septiembre de 1974 envió una carta dirigida al gobernador, donde presenta su renuncia justificando que su “retiro de la rectoría es un hecho que facilitaría la solución de los problemas actuales, provocados por los primeros” (el personal docente). Sin embargo le fue solicitado que permaneciera al frente como apoyo al tomar posesión el nuevo rector. Murió en agosto de 2013."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/luis-fernando-duque-ramirez.jpg",
+                        "caption": "Foto oficial del rector Luis Fernando Duque Ramírez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1975" },
+                    
+                    "text": {
+                        "headline": "Bernardo Trujillo Calle",
+                        "text": "Bernardo Trujillo nació en Venecia, Antioquia, en 1928. Sus estudios los realizó en la Universidad de Antioquia donde se graduó en 1957 como abogado. En 1975 ocupó el cargo de rector de la Universidad de Antioquia, donde tuvo que afrontar –al igual que sus antecesores cercanos– la crisis política y social por la que pasaba la Institución en medio de protestas. Durante su administración se organizaron paros y protestas por las dificultades presupuestales que afectaban a la Institución y por las medidas de fuerza a las que son sometidos estudiantes y profesores. Fue también alcalde de Medellín, diputado de la Asamblea de Antioquia y de la Cámara de Representantes, así como presidente del Consejo Municipal. Además fue cofundador de la Universidad Autónoma Latinoamericana."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/bernardo-trujillo-calle.jpg",
+                        "caption": "Foto oficial del rector Bernardo Trujillo Calle"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1977" },
+                    
+                    "text": {
+                        "headline": "Jorge Elías Peláez Vallejo",
+                        "text": "Jorge Elías Peláez nació en 1943. Médico de la Universidad Javeriana con una especialización en Administración de Atención Médica y Hospitalaria de la Universidad de Antioquia. Durante esta década la Universidad debió asumir cambios muy drásticos debido a las diversas problemáticas y dinámicas que se estaban presentando en la Institución, y que estaban relacionadas con las inconformidades de los miembros de la comunidad universitaria. Esta inestabilidad también se vería reflejada en la dirección de la Universidad, la cual fue ocupada por una cantidad importante de rectores durante periodos muy cortos. Tal fue el caso del profesor Peláez, quien asumió la rectoría a principios de 1977, y en septiembre del mismo año presentó su carta de renuncia. Peláez Vallejo fue también docente de tiempo completo en la Facultad Nacional de Salud Pública, así como médico rural, director del Hospital Regional de Oriente y director del Hospital Universitario San Vicente de Paúl."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/jorge-elias-pelaez-vallejo.jpg",
+                        "caption": "Foto oficial del rector Jorge Elías Peláez Vallejo"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1979" },
+                    
+                    "text": {
+                        "headline": "Luis Carlos Múñoz Uribe",
+                        "text": "Luis Carlos Muñoz nació en Bello en 1939. Odontólogo y Magíster en Salud Pública de la Universidad de Antioquia, cursó la primaria en la escuela Cristóbal Colón y bachillerato en el Liceo Antioqueño. Muñoz fue nombrado rector en 1979, y durante su periodo al frente de la Institución se emitió el nuevo Estatuto General de la Universidad, siguiendo los parámetros de la reforma educativa nacional consignada en el Decreto 80 de 1980. Por los constantes conflictos estudiantiles, la Alma Máter cerró sus puertas durante un año. Además de su paso por la rectoría, fue jefe del Servicio Odontológico Juvenil, director de Asuntos Estudiantiles, jefe del Departamento de Odontología Preventiva y decano de la Facultad de Odontología. También ejerció como Viceministro de Educación, director del ICFES y fue fundador de la universidad CES."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/luis-carlos-munoz-uribe.jpg",
+                        "caption": "Foto oficial del rector Luis Carlos Múñoz Uribe"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1981" },
+                
+                    "text": {
+                        "headline": "Miguel Antonio Yepes Parra",
+                        "text": "Nació en 1938 en Medellín. Su formación académica estuvo enfocada principalmente en el área de la salud. Estudió en el Liceo Antioqueño y medicina en la Universidad de Antioquia; posteriormente se especializó en dermatología en la Facultad Nacional de Salud Pública. Yepes Parra es reconocido por sus aportes a la academia como profesor en el postgrado de Protección Social de la Universidad CES, gestor y fundador de las Facultades de Medicina de la Fundación Universitaria San Martín y de la Corporación Universitaria Remington. Fue también asesor de otras instituciones como el Colegio Odontológico Colombiano, la Universidad de Santander, la Universidad de la Sabana y la Fundación Universitaria Luis Amigó, entre otras. En la Universidad de Antioquia, a parte del cargo de rector, ejerció como profesor de medicina y decano de la misma facultad. También fueron numerosos los cargos públicos que ocupó: gobernador de Antioquia, Ministro de Salud, de Educación y de Gobierno, y embajador de Colombia ante Cuba, entre otros."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/antonio-yepes-parra.jpg",
+                        "caption": "Foto oficial del rector Miguel Antonio Yepes Parra"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1982" },
+                    "end_date": { "year": "1988" },
+                    "text": {
+                       
+                        "text": "Este periodo cuenta con rectores encagardados y no en propiedad debido a la situación de tensión por la que atrevesaba la Universidad"
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1988" },
+                    
+                    "text": {
+                        "headline": "Luis Javier Arroyave Morales",
+                        "text": "Luis Javier Arroyave nació en Liborina, Antioquia, en 1947. Sus primeros estudios los realizó en la Escuela Urbana de Concepción y en la Institución Educativa Javiera Londoño. Cursó estudios superiores en la Universidad de Antioquia, de donde se graduó como médico veterinario. Además de asumir la rectoría en 1988, Arroyave ocupó diversos cargos dentro de la Universidad, entre los que se destacan: decano de la Facultad de Medicina Veterinaria y Zootecnia, vicerrector general (encargado), y jefe del Centro de Investigaciones Pecuarias. Fue también director de la Vicerrectoría Académica del Politécnico Colombiano Jaime Isaza Cadavid. Tras su retiro, fue llamada la profesora Beatriz Restrepo Gallego para asumir la rectoria de manera temporal, mientras se nombraba el nuevo rector. Arroyave continuó con su labor como profesor de tiempo completo, y en 1998 asumió nuevamente como decano de la Facultad de Ciencias Agrarias."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/luis-javier-arroyave-morales.jpg",
+                        "caption": "Foto oficial del rector Luis Javier Arroyave Morales"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1989" },
+                    
+                    "text": {
+                        "headline": "Luis Emilio Pérez Gutiérrez",
+                        "text": "Luis Pérez nació en Cañasgordas, Antioquia, en 1952. Bachiller del Liceo Marco Fidel Suárez e ingeniero industrial de la Facultad de Minas de la Universidad Nacional, donde también cursó una Maestría en Matemáticas. Fue docente en la misma universidad, así como asistente de investigación en la Universidad de Michigan, gerente de la Beneficencia de Antioquia y EDA, y director de Planeación de Antioquia. Pérez Gutiérrez fue nombrado rector de la Universidad de Antioquia en 1989; sin embargo, su periodo no sería considerablemente largo, debido a su ideología liberal y la llegada del conservador Juan Gómez Martínez a la Gobernación de Antioquia durante su rectoría. Además se ha desempeñado en la escena política local ocupando cargos como alcalde de Medellín (2001-2003), Secretario de Educación, director del Instituto Colombiano para el Fomento de la Educación Superior – ICFES -, director de Planeación Antioquia y gobernador de Antioquia para el período 2016-2019."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/luis-perez-gutierrez.jpg",
+                        "caption": "Foto oficial del rector Luis Emilio Pérez Gutiérrez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1992" },
+                    
+                    "text": {
+                        "headline": "Rafael Aubad López",
+                        "text": "Economista de la Universidad de Antioquia con estudios superiores en Desarrollo Agrícola de la Universidad de París y una especialización en Planificación Económica de la misma universidad. Experto en Política Fiscal de la Fundación Getulio Vargas de Brasil. Ejerció como docente de la Facultad de Ciencias Económicas, director del Departamento de Economía, coordinador del Posgrado en Economía, Vicerrector General en 1985, y rector en 1992. Fue fundador de Parque Explora y director de la Corporación Colombiana de Investigación Agropecuaria –Corpoica-. En 2013 asumió como presidente de Proantioquia. Durante su tiempo al frente de la rectoría tuvo que afrontar la crisis interna de robos en la Institución, hasta el punto que manifestó públicamente 'no sé enfrentar delincuentes', y pidió la intervención de las autoridades haciéndole un llamado al entonces gobernador de Antioquia Juan Gómez Martínez, quien acudió a su pedido. Durante este periodo rectoral, la Alma Máter se vio obligada a cerrar sus puertas temporalmente debido a los problemas de seguridad y a las manifestaciones estudiantiles que se tomaron la Institución. En 1994 Aubad López debió retirarse del cargo siendo reemplazado por Álvaro Gaviria Ortiz en calidad de encargado."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/rafael-aubad-lopez.jpg",
+                        "caption": "Foto oficial del rector Rafael Aubad López"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "1995" },
+                    "end_date": { "year": "2001" },
+                    "text": {
+                        "headline": "Jaime Restrepo Cuartas",
+                        "text": "Jaime Restrepo nació en Medellín en 1944. Al finalizar la secundaria ingresó a la Universidad de Antioquia donde se graduó en Medicina y posteriormente cursó una especialización en cirugía general. Fue nombrado rector de la Universidad de Antioquia en 1995 y durante su periodo inicial se abren sedes de la Institución en Urabá, Caucasia, Puerto Berrio, Carmen de Viboral y Andes, donde se empiezan a consolidar los procesos de regionalización de la Universidad por todo el departamento. Durante su rectoría también fue creada la IPS Universitaria. Fue docente, vicedecano y decano de la Facultad de Medicina. Miembro de la Sociedad Latinoamericana de Trasplantes, Asociación Médica de Antioquia, Sociedad Colombiana de Hepatología y Cooperativa Médica de Antioquia, entre otras. Igualmente ejerció como director general de Colciencias y representante a la Cámara por Antioquia. También es autor de numerosas investigaciones y publicaciones. Cabe mencionar que fue elegido como rector para el periodo 1995-1997, pero fue confirmado en el cargo por el Consejo Superior Universitario hasta el año 2001."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/jaime-restrepo-cuartas.jpg",
+                        "caption": "Foto oficial del rector Jaime Restrepo Cuartas"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "2003" },
+                    "end_date": { "year": "2015" },
+                    "text": {
+                        "headline": "Alberto Uribe Correa",
+                        "text": "Uribe Correa se educó en la Escuela Urbana de Varones Fernando González de Envigado y en el Colegio San José. Posteriormente se graduó como médico y cirujano en la Universidad de Antioquia con especialización en dermatología. Durante su periodo rectoral la Institución recibe la acreditación en alta calidad por el máximo periodo otorgado hasta esa fecha (9 años), y se inauguró la Sede de Investigación Universitaria –SIU–, una infraestructura pensada para albergar los grandes procesos de investigación y producción de nuevo conocimiento de la Universidad. El crecimiento de la Institución en términos de infraestructura es uno de los temas claves, pues durante este periodo sigue la apertura de nuevas sedes de la Universidad en las subregiones y Medellín. Además de dirigir la segunda universidad pública más importante del país, Uribe fue asesor de la Dirección Seccional de Salud de Antioquia y decano de la Facultad de Medicina. En 2015 dejó la rectoría y fue designado como asesor de la oficina rectoral de la Corporación Universitaria Americana. Es el rector con más tiempo de permanecia al frente de la institución, ocupando el cargo de rector durante cuatro periodos consecutivos. Fue también presidente de la Junta Directiva del Centro de Investigaciones Médicas y miembro del Parque Tecnológico de Antioquia."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/alberto-uribe-correa.jpg",
+                        "caption": "Foto oficial del rector Alberto Uribe Correa"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "2015" },
+                    "end_date": { "year": "2017" },
+                    "text": {
+                        "headline": "Mauricio Alviar Ramírez",
+                        "text": "Economista de la Facultad de Ciencias Económicas de la Universidad de Antioquia, Magíster en Políticas Públicas de Duke University y Doctor en Economía Agrícola y Recursos Naturales de Oklahoma State University. Vinculado a la Universidad como profesor en la Facultad de Ciencias Económicas desde 1995 hasta la fecha, se ha desempeñado como coordinador de la Maestría en Economía, decano de la Facultad de Ciencias Económicas y director del Centro de Investigaciones y Consultorías. Además, ha sido miembro de la Comisión Nacional para el Aseguramiento de la Calidad de la Educación Superior - Conaces -, par académico del Consejo Nacional de Acreditación -CNA-, y Colciencias; miembro del Consejo Nacional de Ciencias Sociales y Humanas de Colciencias, y director de la Unión Temporal Gestión de Riesgo Ambiental, financiada por Colciencias. Es también autor del libro Introducción a la Economía Ambiental, editado por Mc Graw Hill. Alviar asumió la rectoría de la Universidad de Antioquia para el periodo 2015-2017, periodo en el cual se regularizaron los calendarios académicos de las facultades en toda la Universidad. Además, durante este periodo se debatieron algunos asuntos que involucraron a la comunidad universitaria como cambios al reglamento estudiantil y modificación al examen de admisión."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/mauricio-alviar.jpg",
+                        "caption": "Foto oficial del rector Mauricio Alviar Ramírez"
+                        
+                    }
+                },
+
+                {
+                    "start_date": { "year": "2018" },
+                    "end_date": { "year": "2021" },
+                    "text": {
+                        "headline": "John Jairo Arboleda Céspedes",
+                        "text": "Médico veterinario y Magíster en Medicina Tropical de la Corporación de Ciencias Básicas Biomédicas de la Universidad de Antioquia. Arboleda también ha ejercido como docente y decano de la Facultad de Ciencias Agrarias, jefe del Centro de Investigaciones de la misma facultad, Vicerrector de Investigación encargado, rector encargado en varias oportunidades, director de Bienestar Universitario, director de Regionalización y Vicerrector general. Fue también presidente de la Asociación de Egresados de la Facultad de Ciencias Agrarias -Aseagrarias -. Arboleda se ha destacado como Investigador internacional en Plum Island Animal Disease Center (PIADC) del Departamento de Agricultura de EEUU, sede New York (1998-2000); conformó y lideró el grupo de investigación Centauro, primero en recibir la categoría A en la Escuela de Medicina Veterinaria de la Facultad de Ciencias Agrarias (2002); así como investigador asociado en el Grupo de Inmunovirología de la Facultad de Medicina de la Universidad de Antioquia (1996-2000). Entre sus principales logros durante su trayectoria por la Universidad de Antioquia se destacan: la transformación académico-administrativa de la Facultad de Medicina Veterinaria y Zootecnia en la Facultad de Ciencias Agrarias e impulsar la regionalización universitaria, instalando sedes en las nueve subregiones de Antioquia, con oferta de más de 50 programas académicos y más de 8000 graduados. Esta estrategia ha sido reconocida en 3 ocasiones por el Ministerio de Educación Nacional como el mejor programa de regionalización de la educación superior del país. Fue designado rector de la Universidad de Antioquia por el Consejo Superior Universitario el 27 de febrero de 2018 para el periodo 2018 – 2021."
+                    },
+
+                    "media": {
+                        "url": "img/rectores-xx/john-jairo-arboleda.jpg",
+                        "caption": "Foto oficial del rector John Jairo Arboleda Céspedes"
+                        
+                    }
+                }
+
+            ]
+        };
+
+        // Inicialización de la línea de tiempo
+        window.timeline = new TL.Timeline('timeline-embed', timelineData, {
+            language: 'es',
+            default_bg_color: 'transparent'
+        });
+    </script>
+</body>
+</html>
