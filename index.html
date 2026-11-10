@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
 
     <style>
-        /* 1. FONDO GENERAL Y VENTANA */
+        /* FONDO GENERAL Y VENTANA */
         html, body {
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
             position: relative;
         }
 
-        /* 2. FORMAS DECORATIVAS COMPUESTAS EN EL FONDO */
+        /* FORMAS DECORATIVAS COMPUESTAS EN EL FONDO: probablemente por quitar */
         .bg-decorations {
             position: fixed;
             top: 0;
@@ -76,7 +76,7 @@
             height: 350px;
         }
 
-        /* 3. TRANSPARENCIA TOTAL EN TIMELINEJS */
+        /* TRANSPARENCIA TOTAL EN TIMELINEJS */
         #timeline-embed,
         .tl-timeline,
         .tl-storyslider,
@@ -94,7 +94,7 @@
             height: 100vh;
         }
 
-        /* 4. TARJETA PRINCIPAL DEL RECTOR (Cristal con desenfoque suave) */
+        /* TARJETA PRINCIPAL DEL RECTOR (Cristal con desenfoque suave) */
         .tl-storyslider {
             width: 100% !important;
             max-width: 100% !important;
@@ -143,13 +143,7 @@
             transition: all 0.2s ease !important;
         }
 
-        /* Rector Activo/Seleccionado: Fondo Verde UdeA (#026937) */
-        .tl-marker.tl-marker-active .tl-marker-content-container {
-            background: #026937 !important;
-            color: #ffffff !important;
-            font-weight: bold !important;
-            box-shadow: 0 4px 12px rgba(2, 105, 55, 0.35) !important;
-        }
+        
 
         /* Línea del eje de años */
         .tl-timeaxis-tick {
@@ -171,72 +165,45 @@
             display: block !important;
         }
 
-        /* MARCO ORNAMENTADO VECTORIAL */
-        .tl-media-item::before {
-            content: '' !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            pointer-events: none !important;
-            z-index: 2 !important;
-            border: 16px solid transparent !important;
-            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23026937' stroke-width='2' fill='none'%3E%3Cpath d='M2,2 L98,2 L98,98 L2,98 Z' stroke-width='1'/%3E%3Cpath d='M6,6 L94,6 L94,94 L6,94 Z' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23026937'/%3E%3Ccircle cx='88' cy='12' r='4' fill='%23026937'/%3E%3Ccircle cx='12' cy='88' r='4' fill='%23026937'/%3E%3Ccircle cx='88' cy='88' r='4' fill='%23026937'/%3E%3Cpath d='M2,22 C12,22 22,12 22,2'/%3E%3Cpath d='M98,22 C88,22 78,12 78,2'/%3E%3Cpath d='M2,78 C12,78 22,88 22,98'/%3E%3Cpath d='M98,78 C88,78 78,88 78,98'/%3E%3C/g%3E%3C/svg%3E") 30 stretch !important;
+
+
+   /* 
+   Configuración para: PANTALLAS GRANDES - ESCRITORIO
+   */
+
+    @media (min-width: 1025px) {
+
+        .tl-slide .tl-slide-content {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
         }
 
-        /* 6. BALANCE DE TAMAÑO DE FOTO Y DISTANCIA DEL TEXTO 
         .tl-slide .tl-slide-content .tl-media {
+            order: 1 !important;
             width: 35% !important;
             max-width: 35% !important;
-            margin-right: 0 !important;
+            flex: 0 0 35% !important;
+            float: none !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
         }
 
         .tl-slide .tl-slide-content .tl-text {
+            order: 2 !important;
             width: 60% !important;
             max-width: 60% !important;
-            margin-left: 5% !important;
+            flex: 0 0 60% !important;
+            float: none !important;
+            margin: 0 0 0 5% !important;
             padding-left: 0 !important;
+            box-sizing: border-box !important;
         }
-        */
-
-   /* =========================================
-   1. PANTALLAS GRANDES - ESCRITORIO
-   ========================================= */
-
-@media (min-width: 1025px) {
-
-    .tl-slide .tl-slide-content {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
     }
 
-    .tl-slide .tl-slide-content .tl-media {
-        order: 1 !important;
-        width: 35% !important;
-        max-width: 35% !important;
-        flex: 0 0 35% !important;
-        float: none !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-
-    .tl-slide .tl-slide-content .tl-text {
-        order: 2 !important;
-        width: 60% !important;
-        max-width: 60% !important;
-        flex: 0 0 60% !important;
-        float: none !important;
-        margin: 0 0 0 5% !important;
-        padding-left: 0 !important;
-        box-sizing: border-box !important;
-    }
-}
-
-/* PANTALLAS MEDIANAS (TABLETS / MITAD DE PANTALLA) */
+/* configuració para: PANTALLAS MEDIANAS (TABLETS / MITAD DE PANTALLA) */
 @media (min-width: 769px) and (max-width: 1024px) {
 
     /* Frena la altura de las diapositivas para darle espacio a la línea de tiempo abajo */
@@ -332,7 +299,7 @@
     </style>
 </head>
 <body>
-    <!-- CONTENEDOR DE FORMAS VECTORIALES CON SU CLASE CORRESPONDIENTE -->
+    <!-- CONTENEDOR DE FORMAS VECTORIALES CON SU CLASE CORRESPONDIENTE: esto es para las figuras del fondo -->
     <div class="bg-decorations">
         <!-- 1. Esquina Superior Izquierda: Naranja (#F9A12C) y Morado (#70205B) -->
         <svg class="shape-top-left" viewBox="0 0 480 380" fill="none" xmlns="http://www.w3.org/2000/svg">
